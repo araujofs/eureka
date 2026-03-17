@@ -8,8 +8,8 @@
 		<version>4.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>br.com.pweb2</groupId>
-	<artifactId>questions</artifactId>
+	<groupId>br.edu.ifpb.pweb2</groupId>
+	<artifactId>eureka</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>questions</name>
 	<description>A system where participants compete in task &quot;races&quot; (quick, challenge-type) and accumulate points.</description>

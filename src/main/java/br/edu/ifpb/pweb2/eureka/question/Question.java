@@ -1,10 +1,10 @@
-package br.com.pweb2.questions.question;
+package br.edu.ifpb.pweb2.eureka.question;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import br.com.pweb2.questions.race.Race;
+import br.edu.ifpb.pweb2.eureka.race.Race;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

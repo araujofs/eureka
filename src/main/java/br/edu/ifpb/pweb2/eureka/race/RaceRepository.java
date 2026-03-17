@@ -1,4 +1,4 @@
-package br.com.pweb2.questions.race;
+package br.edu.ifpb.pweb2.eureka.race;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

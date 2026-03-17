@@ -1,4 +1,4 @@
-package br.com.pweb2.questions.question;
+package br.edu.ifpb.pweb2.eureka.question;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

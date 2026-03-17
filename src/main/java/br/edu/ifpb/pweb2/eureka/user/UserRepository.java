@@ -1,4 +1,4 @@
-package br.com.pweb2.questions.user;
+package br.edu.ifpb.pweb2.eureka.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

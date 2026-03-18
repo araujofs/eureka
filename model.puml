@@ -39,14 +39,10 @@
     - answeredAt: LocalDateTime
   }
 
-  r "1" *-- "0..*" q
-  q "1" *-- "0..*" a
+  r "1..1" *-- "1..*" q
+  q "1..1" *-- "1..*" a
 
-  r "0..*" - "0..*" u
-  (r, u) .. re
-  note on link
-    from this relationship 
-    result receives race and user
-  end note
+  re "0..*" o-- "1..1" u
+  re "0..*" o-- "1..1" r
 
 @enduml

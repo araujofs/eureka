@@ -1,4 +1,4 @@
-# 🏆 Questions Project
+# 🏆 Eureka
 
 > A competitive web platform where participants race through challenges and accumulate points.
 

@@ -1,6 +1,7 @@
 package br.edu.ifpb.pweb2.eureka.result;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public class Result {
       CascadeType.REMOVE,
       CascadeType.PERSIST
   }, orphanRemoval = true)
-  private Set<AnsweredQuestion> answeredQuestions;
+  private Set<AnsweredQuestion> answeredQuestions = new HashSet<>();
 
   private Long points;
 

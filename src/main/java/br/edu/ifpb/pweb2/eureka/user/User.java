@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.eureka.user;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class User {
       CascadeType.REMOVE,
       CascadeType.PERSIST
   }, orphanRemoval = true)
-  private Set<Result> results;
+  private Set<Result> results = new HashSet<>();
 
   public void addResult(Result r) {
     Objects.requireNonNull(r, "Question argument must not be null");

@@ -28,7 +28,9 @@
         >
           Entrar
         </h1>
-        <p class="mt-[0.55rem] mb-[1.7rem] text-center text-[0.95rem] text-[#454f63]">
+        <p
+          class="mt-[0.55rem] mb-[1.7rem] text-center text-[0.95rem] text-[#454f63]"
+        >
           Use apenas seu nome para acessar o sistema.
         </p>
 
@@ -49,9 +51,8 @@
             >Nome</label
           >
           <input
-            name="username"
+            th:field="*{name}"
             type="text"
-            autocomplete="username"
             placeholder="Digite seu nome"
             required
             class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.95rem] py-[0.85rem] text-[0.98rem] transition-[border-color,box-shadow] duration-200 ease-out placeholder:text-[#667085] focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"

@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/auth")
@@ -43,4 +46,15 @@ public class AuthController {
 
     return "redirect:/home";
   }
+
+  @PostMapping("/logout")
+    public String postLogout(HttpServletRequest request) {
+      var session = request.getSession(false);
+      if (session != null) {
+        session.invalidate();
+      }
+
+      return "redirect:/auth";
+    }
+    
 }

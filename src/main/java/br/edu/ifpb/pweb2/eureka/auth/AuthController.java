@@ -1,51 +1,46 @@
 package br.edu.ifpb.pweb2.eureka.auth;
 
-// import org.springframework.security.core.context.SecurityContext;
-// import org.springframework.security.core.context.SecurityContextHolder;
-// import org.springframework.security.core.context.SecurityContextHolderStrategy;
-// import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 // import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// import jakarta.servlet.http.HttpServletRequest;
-// import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/signin")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-  // private final AuthService service;
+  private final AuthService service;
 
   @GetMapping
-  public String getLoginPage(Model model) {
-    model.addAttribute("authBody", new AuthRequest(""));
+  public String getAuthForm(Model model) {
+    if (!model.containsAttribute("authBody")) {
+      model.addAttribute("authBody", new AuthRequest(""));
+    }
 
-    return "signin";
+    return "auth/index";
   }
 
-  // @PostMapping
-  // public String postLoginForm(AuthRequest authBody, HttpServletRequest request,
-  // HttpServletResponse response,
-  // Model model) {
-  // try {
-  // var auth = this.service.authenticate(authBody);
-  //
-  // SecurityContext context = securityContextHolderStrat.createEmptyContext();
-  // context.setAuthentication(auth);
-  // securityContextHolderStrat.setContext(context);
-  // securityContextRepo.saveContext(context, request, response);
-  //
-  // return "home";
-  // } catch (Exception e) {
-  // model.addAttribute("errorMessage", e.getMessage());
-  // model.addAttribute("error", true);
-  // }
-  //
-  // return "signin";
-  // }
+  @PostMapping
+  public String postAuthForm(AuthRequest authBody, HttpServletRequest request, RedirectAttributes attributes) {
+    var session = request.getSession(false);
+    if (session != null) {
+      session.invalidate();
+    }
+
+    var user = this.service.authenticate(authBody);
+
+    session = request.getSession(true);
+
+    session.setAttribute("username", user.name());
+    session.setAttribute("admin", user.admin());
+
+    return "redirect:/home";
+  }
 }

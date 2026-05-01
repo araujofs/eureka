@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class HomeController {
 
   private final RaceService service;
+  public static final String ERROR_MESSAGE_MODEL_ATTR = "errorMessage";
 
   @GetMapping("/home")
   public String getHome(Model model) {

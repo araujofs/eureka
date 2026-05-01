@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class RaceService {
   private final RaceRepository repo;
 
-  public Long save(RaceCreateDto dto) {
+  public Long create(RaceCreateDto dto) {
     Objects.requireNonNull(dto, "Race must not be null to save it!");
     Race race = RaceMapper.INSTANCE.toEntity(dto, new RaceMapperContext());
 

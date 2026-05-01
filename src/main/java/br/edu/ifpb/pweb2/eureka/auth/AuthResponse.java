@@ -1,5 +1,5 @@
 package br.edu.ifpb.pweb2.eureka.auth;
 
-public record AuthResponse(String name, boolean admin) {
+public record AuthResponse(Long id, String name, boolean admin) {
     
 }

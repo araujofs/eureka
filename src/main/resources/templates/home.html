@@ -46,7 +46,7 @@
           Nova corrida
         </a>
         <form
-          th:if="${session.username}"
+          th:if="${session.userName}"
           th:action="@{/auth/logout}"
           method="post"
         >
@@ -153,12 +153,12 @@
       </div>
     </main>
     <footer
-      th:if="${session.username}"
+      th:if="${session.userName}"
       class="w-full mb-0 flex justify-end p-4 fixed bottom-0"
     >
       <div class="p-4 rounded-full bg-white text-xl font-semibold">
         Conectado como:
-        <span class="text-[#7d3f97]">[[${session.username}]]</span>
+        <span class="text-[#7d3f97]">[[${session.userName}]]</span>
       </div>
     </footer>
   </body>

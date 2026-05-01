@@ -14,7 +14,7 @@ public class AuthInterceptor implements HandlerInterceptor {
       throws Exception {
     var session = request.getSession(false);
 
-    if (session == null || session.getAttribute("username") == null) {
+    if (session == null || session.getAttribute("userName") == null) {
       response.sendRedirect("/auth");
       return false;
     }

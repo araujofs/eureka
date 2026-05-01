@@ -2,32 +2,24 @@ package br.edu.ifpb.pweb2.eureka.auth;
 
 import org.springframework.stereotype.Service;
 
-import br.edu.ifpb.pweb2.eureka.user.User;
-import br.edu.ifpb.pweb2.eureka.user.UserRepository;
+import br.edu.ifpb.pweb2.eureka.user.UserService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-  private final UserRepository repo;
+  private final UserService service;
 
   public AuthResponse authenticate(AuthRequest auth) {
     System.out.println(auth.name());
-    var user = repo.findByName(auth.name()).orElse(null);
+    var user = service.getByName(auth.name()).orElse(null);
 
     if (user == null) {
-      user = createUser(auth.name());
+      user = service.create(auth.name());
     }
 
-    return new AuthResponse(user.getName(), user.isAdmin());
+    return new AuthResponse(user.getId(), user.getName(), user.isAdmin());
   }
 
-  private User createUser(String name) {
-    var user = new User();
-    user.setAdmin(false);
-    user.setName(name);
-
-    return repo.save(user);
-  }
 }

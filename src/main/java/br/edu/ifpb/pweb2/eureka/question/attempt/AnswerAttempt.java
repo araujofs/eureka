@@ -1,6 +1,8 @@
-package br.edu.ifpb.pweb2.eureka.result;
+package br.edu.ifpb.pweb2.eureka.question.attempt;
 
 import br.edu.ifpb.pweb2.eureka.question.Question;
+import br.edu.ifpb.pweb2.eureka.result.Result;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -14,13 +16,14 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-class AnsweredQuestion {
+public class AnswerAttempt {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
+  @JoinColumn(name = "result_id", nullable = false)
   private Result result;
 
   // unidirectional
@@ -28,16 +31,20 @@ class AnsweredQuestion {
   @JoinColumn(name = "question_id", nullable = false)
   private Question question;
 
-  private boolean answeredCorrectly;
+  @Column(nullable = false, updatable = false)
+  private Integer answerIndex;
+
+  @Column(nullable = false, updatable = false)
+  private boolean answerCorrect;
 
   @Override
   public boolean equals(Object o) {
     if (this == o)
       return true;
-    if (!(o instanceof AnsweredQuestion))
+    if (!(o instanceof AnswerAttempt))
       return false;
 
-    var a = (AnsweredQuestion) o;
+    var a = (AnswerAttempt) o;
     return id != null && id.equals(a.id);
   }
 

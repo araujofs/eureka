@@ -1,13 +1,13 @@
-package br.edu.ifpb.pweb2.eureka.question.dto;
+package br.edu.ifpb.pweb2.eureka.question;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import br.edu.ifpb.pweb2.eureka.question.dto.QuestionAttemptDto;
 import br.edu.ifpb.pweb2.eureka.race.RaceService;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceQuestionsDto;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +30,18 @@ public class QuestionController {
   }
 
   @PostMapping("/add")
-  public String postQuestionForm(@ModelAttribute RaceQuestionsDto race) {
+  public String postQuestionForm(RaceQuestionsDto race) {
     raceService.addQuestions(race.getQuestions(), race.getId());
 
     return "redirect:/home";
   }
+
+  @PostMapping("/{id}/check")
+  public String checkAnswer(QuestionAttemptDto question) {
+    // TODO: check if the question answer is correct
+    // TODO: redirect to according race route
+
+    return entity;
+  }
+
 }

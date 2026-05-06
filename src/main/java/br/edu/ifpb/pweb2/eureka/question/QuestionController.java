@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import br.edu.ifpb.pweb2.eureka.question.dto.QuestionAttemptDto;
 import br.edu.ifpb.pweb2.eureka.race.RaceService;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceQuestionsDto;
 import lombok.RequiredArgsConstructor;
@@ -35,13 +34,4 @@ public class QuestionController {
 
     return "redirect:/home";
   }
-
-  @PostMapping("/{id}/check")
-  public String checkAnswer(QuestionAttemptDto question) {
-    // TODO: check if the question answer is correct
-    // TODO: redirect to according race route
-
-    return entity;
-  }
-
 }

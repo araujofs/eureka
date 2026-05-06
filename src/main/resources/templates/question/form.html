@@ -1,23 +1,5 @@
-<!doctype html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cadastrar questões</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Sora:wght@700&display=swap"
-      rel="stylesheet"
-    />
-    <link th:href="@{/css/output.css}" rel="stylesheet" />
-  </head>
-
-  <body
-    class="min-h-screen bg-[#f6f4fb] font-[Manrope,sans-serif] text-[#1f2430] antialiased"
-  >
-    <header th:insert="~{home.html :: header}"></header>
-    <main class="px-[0.9rem] py-[1.2rem] sm:px-4 sm:py-6">
+<html lang="pt-br" layout:decorate="~{layout}" th:with="title='Entrar'">
+    <section class="px-[0.9rem] py-[1.2rem] sm:px-4 sm:py-6 w-full" layout:fragment="content">
       <form
         th:action="@{/question/add}"
         method="post"
@@ -394,7 +376,7 @@
           </button>
         </section>
       </form>
-    </main>
+    </section>
 
     <script>
       const questionsContainer = document.getElementById("questions-container");
@@ -600,5 +582,4 @@
       bindRemoveButtons();
       updateCardLabels();
     </script>
-  </body>
 </html>

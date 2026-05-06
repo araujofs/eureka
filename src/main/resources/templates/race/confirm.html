@@ -1,50 +1,28 @@
-<!doctype html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cadastrar corrida</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Sora:wght@700&display=swap"
-      rel="stylesheet"
-    />
-    <link th:href="@{/css/output.css}" rel="stylesheet" />
-  </head>
-
-  <body
-    class="min-h-screen bg-[#f6f4fb] font-[Manrope,sans-serif] text-[#1f2430] antialiased"
+<html lang="pt-br" layout:decorate="~{layout}" th:with="title='Remover corrida'">
+  <section
+    class="w-full max-w-lg rounded-[20px] self-center border border-[#1f243014] bg-white p-6 sm:p-8 shadow-[0_14px_28px_rgba(31,36,48,0.1)]"
+    layout:fragment="content"
   >
-    <header th:insert="~{home.html :: header}"></header>
-    <main
-      class="min-h-[calc(100vh-64px)] sm:min-h-[calc(100vh-72px)] flex items-center justify-center px-[0.9rem] py-[1.4rem] sm:px-4 sm:py-8"
+    <h1
+      class="m-0 mb-10 text-[1.9rem] font-extrabold leading-tight text-[#7d3f97] text-center"
     >
-      <section
-        class="w-full max-w-lg rounded-[20px] border border-[#1f243014] bg-white p-6 sm:p-8 shadow-[0_14px_28px_rgba(31,36,48,0.1)]"
-      >
-        <h1
-          class="m-0 mb-10 text-[1.9rem] font-extrabold leading-tight text-[#7d3f97] text-center"
+      Deseja criar as perguntas agora?
+    </h1>
+    <div class="flex justify-between p-2">
+      <a th:href="@{/question/add(raceId=${raceId})}">
+        <button
+          class="w-full cursor-pointer rounded-xl border-0 bg-[#bf5de4] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-white transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
         >
-          Deseja criar as perguntas agora?
-        </h1>
-        <div class="flex justify-between p-2">
-          <a th:href="@{/question/add(raceId=${raceId})}">
-            <button
-              class="w-full cursor-pointer rounded-xl border-0 bg-[#bf5de4] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-white transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
-            >
-              Sim!
-            </button>
-          </a>
-          <a th:href="@{/home}">
-            <button
-              class="w-full cursor-pointer rounded-xl border-0 bg-[#ededea] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-black transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
-            >
-              Não!
-            </button>
-          </a>
-        </div>
-      </section>
-    </main>
-  </body>
+          Sim!
+        </button>
+      </a>
+      <a th:href="@{/home}">
+        <button
+          class="w-full cursor-pointer rounded-xl border-0 bg-[#ededea] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-black transition-all duration-200 ease-out hover:-translate-y-px hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
+        >
+          Não!
+        </button>
+      </a>
+    </div>
+  </section>
 </html>

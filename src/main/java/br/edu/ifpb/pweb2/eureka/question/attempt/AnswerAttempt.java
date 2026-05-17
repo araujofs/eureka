@@ -1,5 +1,7 @@
 package br.edu.ifpb.pweb2.eureka.question.attempt;
 
+import java.util.Objects;
+
 import br.edu.ifpb.pweb2.eureka.question.Question;
 import br.edu.ifpb.pweb2.eureka.result.Result;
 import jakarta.persistence.Column;
@@ -10,12 +12,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"result_id", "question_id"})})
+@lombok.ToString
 public class AnswerAttempt {
 
   @Id
@@ -45,7 +51,7 @@ public class AnswerAttempt {
       return false;
 
     var a = (AnswerAttempt) o;
-    return id != null && id.equals(a.id);
+    return Objects.equals(result, a.result) && Objects.equals(question, a.question);
   }
 
   @Override

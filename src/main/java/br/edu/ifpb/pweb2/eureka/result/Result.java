@@ -1,9 +1,9 @@
 package br.edu.ifpb.pweb2.eureka.result;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -28,7 +28,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"participant_id", "race_id"})})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "participant_id", "race_id" }) })
 public class Result {
 
   @Id
@@ -45,12 +45,13 @@ public class Result {
 
   @OneToMany(mappedBy = "result", fetch = FetchType.LAZY, cascade = {
       CascadeType.REMOVE,
-      CascadeType.PERSIST
+      CascadeType.PERSIST,
+      CascadeType.MERGE
   }, orphanRemoval = true)
-  private Set<AnswerAttempt> answers = new HashSet<>();
+  private List<AnswerAttempt> answers = new ArrayList<>();
 
   @CreationTimestamp
-  @Column(nullable = false, updatable = false, insertable = false)
+  @Column(nullable = false, updatable = false)
   private LocalDateTime startedRaceAt;
 
   private LocalDateTime finishedRaceAt;
@@ -65,7 +66,7 @@ public class Result {
       return false;
 
     var a = (Result) o;
-    return id != null && id.equals(a.id);
+    return Objects.equals(participant, a.participant) && Objects.equals(race, a.race);
   }
 
   @Override

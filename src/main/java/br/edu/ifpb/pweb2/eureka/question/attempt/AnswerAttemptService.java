@@ -21,11 +21,11 @@ public class AnswerAttemptService {
     return repo.findById(id);
   }    
 
-  public AnswerAttempt create(Integer answerIndex, Question question) {
+  public AnswerAttempt create(int answerIndex, Question question) {
     var answer = new AnswerAttempt();
     answer.setAnswerIndex(answerIndex);
     answer.setQuestion(question);
-    answer.setAnswerCorrect(answerIndex != question.getCorrectAnswer());
+    answer.setAnswerCorrect(answerIndex == question.getCorrectAnswer());
 
     return answer;
   }

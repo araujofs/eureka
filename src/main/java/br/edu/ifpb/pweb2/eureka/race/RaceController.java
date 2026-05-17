@@ -1,7 +1,10 @@
 package br.edu.ifpb.pweb2.eureka.race;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.edu.ifpb.pweb2.eureka.question.Question;
 import br.edu.ifpb.pweb2.eureka.question.QuestionService;
 import br.edu.ifpb.pweb2.eureka.question.attempt.AnswerAttempt;
 import br.edu.ifpb.pweb2.eureka.question.attempt.AnswerAttemptService;
@@ -30,15 +34,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RaceController {
 
+  public static final String RESULT_SESSION_ATTR = "resultId";
+  public static final String RACE_SESSION_ATTR = "raceId";
+  public static final String QUESTIONS_SESSION_ATTR = "questionsIds";
+  public static final String ANSWER_SESSION_ATTR = "questionsIdxs";
+
   private final RaceService raceService;
   private final UserService userService;
   private final ResultService resultService;
   private final QuestionService questionService;
   private final AnswerAttemptService answerAttemptService;
-  public static final String RESULT_SESSION_ATTR = "resultId";
-  public static final String RACE_SESSION_ATTR = "raceId";
-  public static final String QUESTIONS_SESSION_ATTR = "questionsIds";
-  public static final String ANSWER_SESSION_ATTR = "questionsIdxs";
+
+  public void print(Object value) {
+    System.out.println(value);
+  }
 
   @GetMapping("/create")
   public String getRaceForm(Model model) {
@@ -119,25 +128,25 @@ public class RaceController {
 
   @PostMapping("/{id}/run")
   public String raceRun(@PathVariable Long id, HttpSession session, RedirectAttributes flashAttributes) {
-    var user = userService.getById((Long) session.getAttribute("userId"));
-    if (user.isEmpty()) {
+    var user = userService.getById((Long) session.getAttribute("userId")).orElse(null);
+    if (user == null) {
       flashAttributes.addFlashAttribute(HomeController.ERROR_MESSAGE_MODEL_ATTR,
           "Seu usuário não existe e portanto não pode participar de corridas!");
       return "redirect:/home";
     }
 
-    var race = raceService.getById(id);
-    if (race.isEmpty()) {
+    var race = raceService.getById(id).orElse(null);
+    if (race == null) {
       flashAttributes.addFlashAttribute(HomeController.ERROR_MESSAGE_MODEL_ATTR, "Corrida não existe!");
       return "redirect:/home";
     }
 
-    var result = resultService.create(user.get(), race.get());
+    var result = resultService.create(user, race);
 
-    session.setAttribute(RACE_SESSION_ATTR, race.get().getId());
+    session.setAttribute(RACE_SESSION_ATTR, race.getId());
     session.setAttribute(RESULT_SESSION_ATTR, result.getId());
     session.setAttribute(QUESTIONS_SESSION_ATTR,
-        race.get().getQuestions().stream().map(question -> question.getId()).toList());
+        race.getQuestions().stream().map(Question::getId).collect(Collectors.toCollection(ArrayList::new)));
 
     return "redirect:/race/" + id + "/running";
   }
@@ -161,10 +170,22 @@ public class RaceController {
       return "redirect:" + checkResult.getRedirectUrl();
     }
 
+    if (LocalDateTime.now().isAfter(result.getStartedRaceAt().plusSeconds(result.getRace().getDuration()))) {
+      flashAttributes.addFlashAttribute("message", "O tempo acabou!");
+      return "redirect:/race/" + id + "/result";
+    }
+
+    result.setCurrentQuestionId(
+        questionCheck.getQuestionsIds().size() > 0 ? questionCheck.getQuestionsIds().getFirst() : null);
+    resultService.edit(result);
+
+    if (questionCheck.getQuestionsIds().size() <= 0) {
+      return "redirect:/race/" + id + "/result";
+    }
+
     model.addAttribute("question", question);
     model.addAttribute("resultId", result.getId());
 
-    // the form data should be like answerAttemptCreateDto
     return "race/question";
   }
 
@@ -178,29 +199,30 @@ public class RaceController {
       return "redirect:" + resultCheck.getRedirectUrl();
     }
 
-    var questionCheck = hasQuestion(session, answerAttempt.getQuestionId(), id);
+    if (Duration.between(result.getStartedRaceAt(), LocalDateTime.now()).getSeconds() >= result.getRace()
+        .getDuration()) {
+      flashAttributes.addFlashAttribute("message", "O tempo acabou!");
+      return "redirect:/race/" + id + "/result";
+    }
+
+    var questionCheck = hasQuestion(session, id);
     var question = questionCheck.getQuestion();
     if (question == null) {
       flashAttributes.addFlashAttribute(HomeController.ERROR_MESSAGE_MODEL_ATTR, questionCheck.getErrorMessage());
       return "redirect:" + questionCheck.getRedirectUrl();
     }
 
+    if (question.getId() != answerAttempt.getQuestionId()) {
+      questionCheck.setErrorMessage("Você está tentando responder a pergunta errada!");
+      return "redirect:/race/" + id + "/running";
+    }
+
     var answer = answerAttemptService.create(answerAttempt.getAnswerIndex(), question);
     result.addAnswer(answer);
 
-    if (questionCheck.getQuestionsIds().size() <= 0) {
-      result.setCurrentQuestionId(null);
-      result.setFinishedRaceAt(LocalDateTime.now());
-      resultService.saveAndFlush(result);
-
-      session.removeAttribute(ANSWER_SESSION_ATTR);
-      session.removeAttribute(QUESTIONS_SESSION_ATTR);
-
-      return "redirect:/race/" + id + "/result";
-    }
-
-    result.setCurrentQuestionId(questionCheck.getQuestionsIds().getFirst());
-    resultService.saveAndFlush(result);
+    questionCheck.getQuestionsIds().removeFirst();
+    result = resultService.saveAndFlush(result);
+    answer = result.getAnswers().get(result.getAnswers().indexOf(answer));
 
     session.setAttribute(ANSWER_SESSION_ATTR, answer.getId());
     session.setAttribute(QUESTIONS_SESSION_ATTR, questionCheck.getQuestionsIds());
@@ -218,6 +240,10 @@ public class RaceController {
     }
     AnswerAttempt answer = answerAttemptService.getById((Long) session.getAttribute(ANSWER_SESSION_ATTR)).get();
     model.addAttribute("question", answer.getQuestion());
+    model.addAttribute("userAnswer", answer.getAnswerIndex());
+
+    var questions = (List<Long>) session.getAttribute(QUESTIONS_SESSION_ATTR);
+    model.addAttribute("finalQuestion", questions == null || questions.size() <= 0);
 
     return "race/answer";
   }
@@ -230,8 +256,19 @@ public class RaceController {
       flashAttributes.addFlashAttribute(HomeController.ERROR_MESSAGE_MODEL_ATTR, resultCheck.getErrorMessage());
       return "redirect:" + resultCheck.getRedirectUrl();
     }
+
+    result.setFinishedRaceAt(LocalDateTime.now());
+
+    resultService.saveAndFlush(result);
+
+    session.removeAttribute(ANSWER_SESSION_ATTR);
+    session.removeAttribute(QUESTIONS_SESSION_ATTR);
+    session.removeAttribute(RESULT_SESSION_ATTR);
+    session.removeAttribute(RACE_SESSION_ATTR);
+
     model.addAttribute("points", result.getPoints());
     model.addAttribute("answers", result.getAnswers());
+    model.addAttribute("time", Duration.between(result.getStartedRaceAt(), result.getFinishedRaceAt()).getSeconds());
 
     return "race/result";
   }
@@ -248,7 +285,7 @@ public class RaceController {
     var result = resultService.getById(resultId).get();
 
     if (raceId == null || result.getRace().getId() != raceId) {
-      resultCheck.setErrorMessage("Ainda não iniciou corrida!");
+      resultCheck.setErrorMessage("Ainda não iniciou corrida (has)!");
       return resultCheck;
     }
 
@@ -256,42 +293,23 @@ public class RaceController {
     return resultCheck;
   }
 
-  private QuestionCheckDto hasQuestion(HttpSession session, Long answerAttemptQuestionId, Long raceId) {
-    var questionCheck = new QuestionCheckDto(null, null, null, "/home");
-
-    var questionsIds = (List<Long>) session.getAttribute(QUESTIONS_SESSION_ATTR);
-    if (questionsIds == null) {
-      questionCheck.setErrorMessage("Você não está jogando uma corrida!");
-      return questionCheck;
-    }
-
-    var questionId = questionsIds.removeFirst();
-    var question = questionService.getById(questionId).get();
-    if (raceId == null || question.getRace().getId() != raceId) {
-      questionCheck.setErrorMessage("Você não está jogando essa corrida!");
-      return questionCheck;
-    }
-
-    if (questionId != answerAttemptQuestionId) {
-      questionCheck.setErrorMessage("Você está tentando responder a pergunta errada!");
-      return questionCheck;
-    }
-
-    questionCheck.setQuestion(question);
-    questionCheck.setQuestionsIds(questionsIds);
-    return questionCheck;
-  }
-
   private QuestionCheckDto hasQuestion(HttpSession session, Long raceId) {
     var questionCheck = new QuestionCheckDto(null, null, null, "/home");
 
-    var questionsIds = (List<Long>) session.getAttribute(QUESTIONS_SESSION_ATTR);
+    var questionsIds = (ArrayList<Long>) session.getAttribute(QUESTIONS_SESSION_ATTR);
+    print("QuestionsIds: " + questionsIds);
+
     if (questionsIds == null) {
       questionCheck.setErrorMessage("Você não está jogando uma corrida!");
       return questionCheck;
     }
 
-    var questionId = questionsIds.removeFirst();
+    if (questionsIds.size() == 0) {
+      questionCheck.setQuestionsIds(questionsIds);
+      return questionCheck;
+    }
+
+    var questionId = questionsIds.getFirst();
     var question = questionService.getById(questionId).get();
     if (raceId == null || question.getRace().getId() != raceId) {
       questionCheck.setErrorMessage("Você não está jogando essa corrida!");

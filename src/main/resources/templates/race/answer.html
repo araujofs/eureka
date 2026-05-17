@@ -1,0 +1,110 @@
+<html lang="pt-br" layout:decorate="~{layout}" th:with="title='Resposta'">
+  <section
+    class="w-full max-w-3xl rounded-[22px] self-center border border-[#1f243014] bg-white p-6 sm:p-8 shadow-[0_14px_28px_rgba(31,36,48,0.1)]"
+    layout:fragment="content"
+  >
+    <div class="mb-6">
+      <h1
+        class="m-0 text-[1.7rem] sm:text-[1.9rem] font-extrabold leading-tight text-[#7d3f97]"
+      >
+        Resposta enviada
+      </h1>
+      <p class="mt-2 text-[0.98rem] text-[#5a6270]">
+        Confira a pergunta e avance para a próxima etapa.
+      </p>
+    </div>
+
+    <div class="rounded-2xl border border-[#e6e8ee] bg-[#fbfbff] p-5 sm:p-6">
+      <p
+        class="text-[1.05rem] font-semibold text-[#1f2430]"
+        th:text="${question.statement}"
+      >
+        Enunciado da pergunta
+      </p>
+    </div>
+
+    <div class="mt-6 space-y-3">
+      <article th:each="answer, stat : ${question.answers}">
+        <div
+          class="rounded-xl border border-green-500 bg-white px-4 py-3 text-[0.98rem] text-green-400"
+          th:if="${stat.index == question.correctAnswer}"
+        >
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full bg-[#16a34a]"></span>
+            [[${stat.index == userAnswer ? 'Sua resposta' : 'Resposta
+            correta'}]]
+          </span>
+          <span
+            class="block mt-1"
+            th:text="${answer}"
+            th:classappend="${stat.index == question.correctAnswer} ? ' font-semibold' : ''"
+          >
+            Resposta
+          </span>
+        </div>
+
+        <div
+          class="rounded-xl border border-amber-600 bg-white px-4 py-3 text-[0.98rem] text-amber-500"
+          th:if="${stat.index != question.correctAnswer && stat.index == userAnswer}"
+        >
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full bg-amber-600"></span>
+            [[${stat.index == userAnswer ? 'Sua resposta' : 'Resposta
+            incorreta'}]]
+          </span>
+          <span
+            class="block mt-1"
+            th:text="${answer}"
+            th:classappend="${stat.index == question.correctAnswer} ? ' font-semibold' : ''"
+          >
+            Resposta
+          </span>
+        </div>
+
+        <div
+          class="rounded-xl border border-red-600 bg-white px-4 py-3 text-[0.98rem] text-red-400"
+          th:if="${stat.index != question.correctAnswer && stat.index != userAnswer}"
+        >
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full bg-red-600"></span>
+            [[${stat.index == userAnswer ? 'Sua resposta' : 'Resposta
+            incorreta'}]]
+          </span>
+          <span
+            class="block mt-1"
+            th:text="${answer}"
+            th:classappend="${stat.index == question.correctAnswer} ? ' font-semibold' : ''"
+          >
+            Resposta
+          </span>
+        </div>
+      </article>
+    </div>
+
+    <a
+      th:href="@{/race/{id}/result(id=${question.race.id})}"
+      class="mt-6 block"
+      th:if="${finalQuestion}"
+    >
+      <button
+        type="button"
+        class="w-full cursor-pointer rounded-xl border-0 bg-[#bf5de4] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-white transition-all duration-200 ease-out hover:-translate-y-px hover:bg-[#ab49d2] hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
+      >
+        Ir para resultado
+      </button>
+    </a>
+
+    <a
+      th:href="@{/race/{id}/running(id=${question.race.id})}"
+      class="mt-6 block"
+      th:if="${!finalQuestion}"
+    >
+      <button
+        type="button"
+        class="w-full cursor-pointer rounded-xl border-0 bg-[#bf5de4] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-white transition-all duration-200 ease-out hover:-translate-y-px hover:bg-[#ab49d2] hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
+      >
+        Próxima pergunta
+      </button>
+    </a>
+  </section>
+</html>

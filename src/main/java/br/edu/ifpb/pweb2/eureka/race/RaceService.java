@@ -81,6 +81,16 @@ public class RaceService {
     return RaceMapper.INSTANCE.toDtos(races);
   }
 
+  public List<RaceDto> getAllActive(Long userId) {
+    var races = repo.findAllActiveRacesWithResults();
+    var raceDtos = races.stream().map(race -> {
+      var played = race.getResults().stream().anyMatch(result -> result.getParticipant().getId() == userId);
+      return new RaceDto(race.getId(), race.getTitle(), race.getDescription(), race.getDuration(), race.isActive(), played);
+    });
+
+    return raceDtos.toList();
+  }
+
   public Optional<Race> getById(Long id) {
     return repo.findById(id);
   }

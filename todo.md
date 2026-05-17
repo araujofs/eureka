@@ -17,3 +17,8 @@ To-Dos:
 - [ ] remove spring security
   - [ ] add controller routes
   - [ ] add sessions
+
+garantir que user nao consiga entrar em corrida que nao esta fazendo
+impedir user de sair de corrida atual
+consertar o que quer que esteja errado com racing inter
+impedir user de voltar para corrida com mais tempo do que permitido

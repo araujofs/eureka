@@ -9,9 +9,8 @@
       <div>
         <h1
           class="m-0 text-[1.7rem] sm:text-[1.9rem] font-extrabold leading-tight text-[#7d3f97]"
-          th:text="${message}"
         >
-          Resultado da corrida
+        Resultado da corrida [[${message != null ? message : ''}]]
         </h1>
         <p class="mt-2 text-[0.98rem] text-[#5a6270]">
           Veja sua pontuação e as respostas enviadas.

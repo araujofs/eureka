@@ -16,15 +16,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"race", "statement"})})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = {"race_id", "statement"})})
 public class Question {
 
   @Id
@@ -54,7 +56,7 @@ public class Question {
       return false;
 
     var a = (Question) o;
-    return Objects.equals(race, a.race) && Objects.equals(statement, a.statement);
+    return Objects.equals(id, a.id);
   }
 
   @Override

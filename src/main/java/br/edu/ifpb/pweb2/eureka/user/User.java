@@ -54,7 +54,7 @@ public class User {
       throw new IllegalArgumentException("Result does not belong to Race");
     }
 
-    r.setRace(null);
     results.remove(r);
+    r.setRace(null);
   }
 }

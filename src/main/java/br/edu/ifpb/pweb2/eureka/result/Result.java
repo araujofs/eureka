@@ -88,8 +88,8 @@ public class Result {
       throw new IllegalArgumentException("AnsweredAnsweredQuestion does not belong to Race");
     }
 
-    q.setResult(null);
     answers.remove(q);
+    q.setResult(null);
   }
 
   public Integer getPoints() {

@@ -22,7 +22,6 @@ import br.edu.ifpb.pweb2.eureka.question.attempt.AnswerAttemptService;
 import br.edu.ifpb.pweb2.eureka.question.dto.QuestionCheckDto;
 import br.edu.ifpb.pweb2.eureka.question.dto.attempt.AnswerAttemtCreateDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceCreateDto;
-import br.edu.ifpb.pweb2.eureka.race.dto.RaceDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceEditDto;
 import br.edu.ifpb.pweb2.eureka.result.ResultService;
 import br.edu.ifpb.pweb2.eureka.result.dto.ResultCheckDto;

@@ -3,14 +3,12 @@ package br.edu.ifpb.pweb2.eureka.ranking;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.pweb2.eureka.race.Race;
-import br.edu.ifpb.pweb2.eureka.race.RaceService;
 import br.edu.ifpb.pweb2.eureka.ranking.dto.RankDto;
 import br.edu.ifpb.pweb2.eureka.ranking.dto.UserRankDto;
 import br.edu.ifpb.pweb2.eureka.user.User;
@@ -22,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class RankingService {
 
   private final UserService userService;
-  private final RaceService raceService;
 
   class RankComparator implements Comparator<UserRankDto> {
     @Override

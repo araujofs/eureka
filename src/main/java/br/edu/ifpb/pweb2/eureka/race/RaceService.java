@@ -74,7 +74,7 @@ public class RaceService {
   }
 
   public List<RaceDto> getAllActive(Long userId) {
-    var races = repo.findAllActiveRacesWithResults();
+    var races = repo.findAllByActiveTrueOrderByResultsParticipantNameAsc();
     var raceDtos = races.stream().map(race -> {
       var played = race.getResults().stream().anyMatch(result -> result.getParticipant().getId() == userId);
       return new RaceDto(race.getId(), race.getTitle(), race.getDescription(), race.getDuration(), race.isActive(),
@@ -89,7 +89,7 @@ public class RaceService {
   }
 
   public Optional<Race> getByIdWithResults(Long id) {
-    return repo.findByIdWithResults(id);
+    return repo.findByIdOrderByResultsParticipantNameAsc(id);
   }
 
   public Optional<RaceDto> getCreateById(Long id) {

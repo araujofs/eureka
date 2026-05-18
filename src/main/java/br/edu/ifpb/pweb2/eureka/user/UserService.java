@@ -17,12 +17,8 @@ public class UserService {
     return repo.findById(id);
   }
 
-  public Optional<User> getByIdWithResults(Long id)  {
-    return repo.findByIdWithResults(id);
-  }
-
   public List<User> getAllWithResults()  {
-    return repo.findAllByAdminFalse();
+    return repo.findAllByAdminFalseOrderByNameAsc();
   }
 
   public Optional<User> getByName(String name)  {

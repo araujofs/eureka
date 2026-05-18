@@ -1,115 +1,91 @@
-# 🏆 Eureka
+# 🏁 Eureka
 
-> A competitive web platform where participants race through challenges and accumulate points.
+Plataforma web para competições de perguntas em formato de **corrida**: cada participante responde questões, acumula pontos por dificuldade e tem seu progresso registrado.
 
----
+## O que o projeto faz
 
-## 📋 Table of Contents
+O Eureka permite:
 
-- [About](#about)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
+- criar e gerenciar corridas (`Race`) com título, duração e descrição;
+- cadastrar questões (`Question`) por corrida, com alternativas e dificuldade;
+- registrar a participação de usuários (`User`) em corridas;
+- armazenar resultados (`Result`) por usuário/corrida;
+- registrar tentativas de resposta (`AnswerAttempt`) e calcular pontuação com base na dificuldade das questões acertadas.
 
----
+## Stack principal
 
-## About
+- Java 21
+- Spring Boot 4
+- Spring Web MVC
+- Spring Data JPA
+- Thymeleaf
+- H2 (runtime) + JPA/Hibernate
+- Maven
+- Tailwind CSS (via pnpm)
 
-**Questions Project** is a Spring Boot web application designed for competitive learning. Participants join task "races" — fast-paced, challenge-style events — and earn points based on their performance. The platform tracks scores and rankings, making it ideal for educational competitions or team-based quiz sessions.
+## Pré-requisitos
 
----
+- JDK 21+
+- Maven 3.9+
 
-## Tech Stack
-
-| Technology | Version | Purpose |
-|---|---|---|
-| **Java** | 25 | Core language |
-| **Spring Boot** | 4.0.3 | Application framework |
-| **Spring Web MVC** | — | REST & web layer |
-| **Spring Data JPA** | — | ORM & data access |
-| **Thymeleaf** | — | Server-side HTML templating |
-| **Flyway** | — | Database schema migrations |
-| **PostgreSQL** | — | Relational database |
-| **Lombok** | — | Boilerplate reduction |
-| **Maven** | — | Build & dependency management |
-
----
-
-## Prerequisites
-
-Before running the project, make sure you have the following installed:
-
-- [JDK 25+](https://openjdk.org/)
-- [Maven 3.9+](https://maven.apache.org/)
-- [PostgreSQL 14+](https://www.postgresql.org/)
-
----
-
-## Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/araujofs/questions-project.git
-cd questions-project
-```
-
-### 2. Configure the database
-
-Create a PostgreSQL database and update `src/main/resources/application.yml` with your credentials:
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/questions
-    username: your_username
-    password: your_password
-```
-
-### 3. Build and run
+## Como executar
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-The application will start on [http://localhost:8080](http://localhost:8080).
-
-### 4. Running tests
+## Testes
 
 ```bash
 ./mvnw test
 ```
 
----
+## Diagrama textual do modelo (JPA)
 
-## Project Structure
+```text
+[User]
+- id
+- name (único)
+- admin
+  1 ────────────────< N
+                     [Result]
+                     - id
+                     - startedRaceAt
+                     - finishedRaceAt
+                     - currentQuestionId
+                     - points (calculado pelas respostas corretas)
+                     (único por participant_id + race_id)
+  N >─────────────── 1
+[Race]
+- id
+- title (único)
+- description
+- duration
+- active
+  1 ────────────────< N [Question]
+                     - id
+                     - statement
+                     - difficulty
+                     - answers (ElementCollection)
+                     - correctAnswer
+                     (único por race_id + statement)
 
+[Result] 1 ─────────< N [AnswerAttempt]
+                     - id
+                     - answerIndex
+                     - answerCorrect
+                     (único por result_id + question_id)
+
+[AnswerAttempt] N >── 1 [Question]
 ```
-src/
-├── main/
-│   ├── java/br/com/pweb2/questions/
-│   │   ├── QuestionsApplication.java   # Application entry point
-│   │   ├── controller/                 # Web & REST controllers
-│   │   ├── model/                      # JPA entities
-│   │   ├── repository/                 # Data access layer
-│   │   └── service/                    # Business logic
-│   └── resources/
-│       ├── db/migration/               # Flyway SQL migrations
-│       └── templates/                  # Thymeleaf HTML templates
-└── test/
-    └── java/br/com/pweb2/questions/    # Unit & integration tests
+
+## Estrutura resumida
+
+```text
+src/main/java/br/edu/ifpb/pweb2/eureka
+├── race/
+├── question/
+├── result/
+├── user/
+└── ...
 ```
-
----
-
-## Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/my-feature`)
-3. Commit your changes (`git commit -m 'Add my feature'`)
-4. Push to the branch (`git push origin feature/my-feature`)
-5. Open a Pull Request

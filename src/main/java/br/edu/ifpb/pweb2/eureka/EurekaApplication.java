@@ -1,5 +1,7 @@
 package br.edu.ifpb.pweb2.eureka;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
@@ -8,9 +10,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import br.edu.ifpb.pweb2.eureka.question.Question;
+import br.edu.ifpb.pweb2.eureka.question.attempt.AnswerAttempt;
 import br.edu.ifpb.pweb2.eureka.question.difficulty.Difficulty;
 import br.edu.ifpb.pweb2.eureka.race.Race;
 import br.edu.ifpb.pweb2.eureka.race.RaceRepository;
+import br.edu.ifpb.pweb2.eureka.result.Result;
+import br.edu.ifpb.pweb2.eureka.result.ResultRepository;
 import br.edu.ifpb.pweb2.eureka.user.User;
 import br.edu.ifpb.pweb2.eureka.user.UserRepository;
 
@@ -22,28 +27,15 @@ public class EurekaApplication {
   }
 
   @Bean
-  CommandLineRunner initAdminUser(UserRepository userRepo, RaceRepository raceRepo) {
+  CommandLineRunner initAdminUser(
+      UserRepository userRepo,
+      RaceRepository raceRepo,
+      ResultRepository resultRepo) {
     var adminName = "nilce";
     var userName = "arthur";
 
     return args -> {
-      if (!userRepo.existsByName(adminName)) {
-        var admin = new User();
-
-        admin.setAdmin(true);
-        admin.setName(adminName);
-
-        userRepo.save(admin);
-      }
-
-      if (!userRepo.existsByName(userName)) {
-        var user = new User();
-
-        user.setAdmin(false);
-        user.setName(userName);
-
-        userRepo.save(user);
-      }
+      seedUsers(userRepo, adminName, userName);
 
       var race1 = new Race();
       race1.setTitle("Arte clássica");
@@ -561,6 +553,22 @@ public class EurekaApplication {
       raceRepo.save(race13);
       raceRepo.save(race10);
 
+      seedRanking(resultRepo, userRepo, List.of(
+          race1,
+          race2,
+          race3,
+          race4,
+          race5,
+          race6,
+          race7,
+          race8,
+          race9,
+          race10,
+          race11,
+          race12,
+          race13
+      ));
+
     };
   }
 
@@ -575,6 +583,97 @@ public class EurekaApplication {
     question.setAnswers(answers);
     question.setCorrectAnswer(correctAnswer);
     return question;
+  }
+
+  private static void seedUsers(UserRepository userRepo, String adminName, String userName) {
+    if (!userRepo.existsByName(adminName)) {
+      var admin = new User();
+      admin.setAdmin(true);
+      admin.setName(adminName);
+      userRepo.save(admin);
+    }
+
+    if (!userRepo.existsByName(userName)) {
+      var user = new User();
+      user.setAdmin(false);
+      user.setName(userName);
+      userRepo.save(user);
+    }
+  }
+
+  private static void seedRanking(
+      ResultRepository resultRepo,
+      UserRepository userRepo,
+      List<Race> races) {
+    var userNames = List.of(
+        "joao",
+        "maria",
+        "ana",
+        "paulo",
+        "lucas",
+        "julia",
+        "rafael",
+        "mariana",
+        "gabriel",
+        "beatriz",
+        "fernando",
+        "camila",
+        "vitor",
+        "isabela",
+        "bruno",
+        "leticia",
+        "gustavo",
+        "amanda",
+        "rodrigo",
+        "larissa",
+        "thiago",
+        "patricia"
+    );
+
+    var users = new ArrayList<User>();
+    for (var name : userNames) {
+      var user = userRepo.findByName(name).orElseGet(() -> {
+        var newUser = new User();
+        newUser.setAdmin(false);
+        newUser.setName(name);
+        return userRepo.save(newUser);
+      });
+      users.add(user);
+    }
+
+    if (users.isEmpty() || races.isEmpty()) {
+      return;
+    }
+
+    for (int i = 0; i < users.size(); i++) {
+      var user = users.get(i);
+      var race = races.get(i % races.size());
+
+      if (resultRepo.findByParticipantAndRace(user, race).isPresent()) {
+        continue;
+      }
+
+      var result = new Result();
+      result.setParticipant(user);
+      result.setRace(race);
+      result.setStartedRaceAt(LocalDateTime.now().minusMinutes(5));
+      result.setFinishedRaceAt(LocalDateTime.now().minusMinutes(4));
+
+      var questions = race.getQuestions();
+      var maxAnswers = Math.min(5, questions.size());
+      for (int q = 0; q < maxAnswers; q++) {
+        var question = questions.get(q);
+        int answerIndex = (i + q) % question.getAnswers().size();
+
+        var answerAttempt = new AnswerAttempt();
+        answerAttempt.setQuestion(question);
+        answerAttempt.setAnswerIndex(answerIndex);
+        answerAttempt.setAnswerCorrect(answerIndex == question.getCorrectAnswer());
+        result.addAnswer(answerAttempt);
+      }
+
+      resultRepo.save(result);
+    }
   }
 
 }

@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.eureka.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +15,14 @@ public class UserService {
 
   public Optional<User> getById(Long id)  {
     return repo.findById(id);
+  }
+
+  public Optional<User> getByIdWithResults(Long id)  {
+    return repo.findByIdWithResults(id);
+  }
+
+  public List<User> getAllWithResults()  {
+    return repo.findAllByAdminFalse();
   }
 
   public Optional<User> getByName(String name)  {

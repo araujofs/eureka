@@ -45,40 +45,38 @@ Após iniciar, a aplicação fica disponível em: http://localhost:8080
 ## Diagrama textual do modelo (JPA)
 
 ```text
-[User]
-- id
-- name (único)
-- admin
-  1 ────────────────< N
-                     [Result]
-                     - id
-                     - startedRaceAt
-                     - finishedRaceAt
-                     - currentQuestionId
-                     - points (calculado pelas respostas corretas)
-                     (único por participant_id + race_id)
-  N >─────────────── 1
-[Race]
-- id
-- title (único)
-- description
-- duration
-- active
-  1 ────────────────< N [Question]
-                     - id
-                     - statement
-                     - difficulty
-                     - answers (ElementCollection)
-                     - correctAnswer
-                     (único por race_id + statement)
-
-[Result] 1 ─────────< N [AnswerAttempt]
-                     - id
-                     - answerIndex
-                     - answerCorrect
-                     (único por result_id + question_id)
-
-[AnswerAttempt] N >── 1 [Question]
+┌─────────────────────────────────┐
+│           Participante          │
+├─────────────────────────────────┤
+│ - id: Long                      │
+│ - nome: String                  │
+│ - email: String                 │
+│ - admin: Boolean                │
+│ - corridasFeitas: List          │
+└──────────────┬──────────────────┘
+               │ corridasFeitas (0..*)
+               │
+┌──────────────▼──────────────────┐       ┌──────────────────────────────────┐
+│             Corrida             │       │             Resultado            │
+├─────────────────────────────────┤       ├──────────────────────────────────┤
+│ - id: Long                      │◄──────│ - id: Long                       │
+│ - titulo: String                │corrida│ - participante: Participante     │
+│ - descricao: String             │       │ - corrida: Corrida               │
+│ - tempoSegundos: Integer        │       │ - pontuacao: BigDecimal          │
+│ - ativa: Boolean                │       │ - dataHora: LocalDateTime        │
+│ - perguntas: List               │       └──────────────────────────────────┘
+└──────────────┬──────────────────┘
+               │ perguntas (0..*)
+               │
+┌──────────────▼──────────────────┐
+│             Pergunta            │
+├─────────────────────────────────┤
+│ - id: Long                      │
+│ - enunciado: String             │
+│ - alternativas: List            │
+│ - respostaCorreta: Integer      │
+│ - corrida: Corrida              │
+└─────────────────────────────────┘
 ```
 
 ## Estrutura resumida

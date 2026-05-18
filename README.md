@@ -45,38 +45,53 @@ Após iniciar, a aplicação fica disponível em: http://localhost:8080
 ## Diagrama textual do modelo (JPA)
 
 ```text
-┌─────────────────────────────────┐
-│           Participante          │
-├─────────────────────────────────┤
-│ - id: Long                      │
-│ - nome: String                  │
-│ - email: String                 │
-│ - admin: Boolean                │
-│ - corridasFeitas: List          │
-└──────────────┬──────────────────┘
-               │ corridasFeitas (0..*)
-               │
-┌──────────────▼──────────────────┐       ┌──────────────────────────────────┐
-│             Corrida             │       │             Resultado            │
-├─────────────────────────────────┤       ├──────────────────────────────────┤
-│ - id: Long                      │◄──────│ - id: Long                       │
-│ - titulo: String                │corrida│ - participante: Participante     │
-│ - descricao: String             │       │ - corrida: Corrida               │
-│ - tempoSegundos: Integer        │       │ - pontuacao: BigDecimal          │
-│ - ativa: Boolean                │       │ - dataHora: LocalDateTime        │
-│ - perguntas: List               │       └──────────────────────────────────┘
-└──────────────┬──────────────────┘
-               │ perguntas (0..*)
-               │
-┌──────────────▼──────────────────┐
-│             Pergunta            │
-├─────────────────────────────────┤
-│ - id: Long                      │
-│ - enunciado: String             │
-│ - alternativas: List            │
-│ - respostaCorreta: Integer      │
-│ - corrida: Corrida              │
-└─────────────────────────────────┘
+Race
+├── id: Long (PK)
+├── title: String (unique)
+├── description: String
+├── duration: Integer
+├── active: boolean
+├── questions: List<Question> (1:N, cascade ALL, orphanRemoval)
+└── results: Set<Result> (1:N, cascade ALL, orphanRemoval)
+
+Question
+├── id: Long (PK)
+├── statement: String
+├── difficulty: Difficulty
+├── answers: List<String> (ElementCollection)
+├── correctAnswer: Integer
+└── race: Race (N:1, FK race_id)
+
+User
+├── id: long (PK)
+├── name: String (unique)
+├── admin: boolean
+└── results: Set<Result> (1:N, cascade REMOVE+PERSIST, orphanRemoval)
+
+Result
+├── id: Long (PK)
+├── participant: User (N:1, FK participant_id)
+├── race: Race (N:1, FK race_id)
+├── answers: List<AnswerAttempt> (1:N, cascade REMOVE+PERSIST+MERGE, orphanRemoval)
+├── startedRaceAt: LocalDateTime (CreationTimestamp)
+├── finishedRaceAt: LocalDateTime
+└── currentQuestionId: Long
+  unique: (participant_id, race_id)
+
+AnswerAttempt
+├── id: Long (PK)
+├── result: Result (N:1, FK result_id)
+├── question: Question (N:1, FK question_id)
+├── answerIndex: Integer
+└── answerCorrect: boolean
+  unique: (result_id, question_id)
+
+Relacionamentos:
+Race     ──< Question      (1 race tem N questions)
+Race     ──< Result        (1 race tem N results)
+User     ──< Result        (1 user tem N results)
+Result   ──< AnswerAttempt (1 result tem N attempts)
+Question ──< AnswerAttempt (1 question tem N attempts)
 ```
 
 ## Estrutura resumida

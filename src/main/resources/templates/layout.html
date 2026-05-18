@@ -34,6 +34,13 @@
           </svg>
           Nova corrida
         </a>
+        <a
+          th:if="${session.userName}"
+          th:href="@{/ranking}"
+          class="inline-flex items-center gap-2 rounded-full border border-[#1f24301f] px-4 py-2 text-[0.85rem] font-semibold text-[#1f2430] transition hover:bg-[#f1f3f7]"
+        >
+          Ranking
+        </a>
         <form
           th:if="${session.userName}"
           th:action="@{/auth/logout}"

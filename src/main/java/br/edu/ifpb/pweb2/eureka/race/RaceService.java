@@ -95,6 +95,10 @@ public class RaceService {
     return repo.findById(id);
   }
 
+  public Optional<Race> getByIdWithResults(Long id) {
+    return repo.findByIdWithResults(id);
+  }
+
   public Optional<RaceDto> getCreateById(Long id) {
     var race = repo.findById(id);
 

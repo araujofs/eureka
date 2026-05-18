@@ -1,0 +1,94 @@
+<html lang="pt-br" layout:decorate="~{layout}" th:with="title='Ranking'">
+  <section
+    class="w-full max-w-4xl rounded-[22px] self-center border border-[#1f243014] bg-white p-6 sm:p-8 shadow-[0_14px_28px_rgba(31,36,48,0.1)]"
+    layout:fragment="content"
+  >
+    <div class="mb-6">
+      <h1
+        class="m-0 text-[1.7rem] sm:text-[1.9rem] font-extrabold leading-tight text-[#7d3f97]"
+      >
+      Ranking [[${race != null ? ' - ' + race.title : ''}]]
+      </h1>
+      <p class="mt-2 text-[0.98rem] text-[#5a6270]">
+        Confira as pontua&ccedil;&otilde;es!
+      </p>
+    </div>
+
+    <section
+      class="mb-6 rounded-2xl border border-[#e6e8ee] bg-[#fbfbff] px-5 py-4"
+      th:if="${ranking.currentRankDto.ranking}"
+    >
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <span class="text-[0.85rem] font-semibold text-[#6b7280]"
+            >Sua posi&ccedil;&atilde;o</span
+          >
+          <div
+            class="mt-1 text-[1.6rem] font-extrabold text-[#1f2430]"
+            th:text="${ranking.currentRankDto.ranking + 1}"
+          >
+            1
+          </div>
+        </div>
+        <div>
+          <span class="text-[0.85rem] font-semibold text-[#6b7280]"
+            >Seus pontos</span
+          >
+          <div
+            class="mt-1 text-[1.6rem] font-extrabold text-[#1f2430]"
+            th:text="${ranking.currentRankDto.points}"
+          >
+            0
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div
+      th:if="${#lists.isEmpty(ranking.rank)}"
+      class="rounded-2xl border-2 border-dashed border-[#aab] bg-[#fbfbfd] p-8 text-center"
+    >
+      <p class="text-[#667085]">Nenhum resultado registrado ainda.</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(ranking.rank)}" class="space-y-3">
+      <article
+        th:each="userRank : ${ranking.rank}"
+        class="rounded-2xl border border-[#e6e8ee] bg-white p-4 sm:p-5"
+        th:classappend="${userRank.ranking == ranking.currentRankDto.ranking} ? ' border-[#7d3f97] bg-[#f8f2fb]' : ''"
+      >
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span
+              class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f1f3f7] text-[0.95rem] font-bold text-[#3f4552]"
+              th:text="${userRank.ranking + 1}"
+            >
+              1
+            </span>
+            <div>
+              <span class="block text-[0.8rem] font-semibold text-[#6b7280]"
+                >Posi&ccedil;&atilde;o</span
+              >
+              <span
+                class="text-[0.95rem] font-semibold text-[#1f2430]"
+                th:text="${userRank.userName}"
+                >Jogador</span
+              >
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="block text-[0.78rem] font-semibold text-[#6b7280]"
+              >Pontos</span
+            >
+            <span
+              class="text-[1.05rem] font-extrabold text-[#1f2430]"
+              th:text="${userRank.points}"
+            >
+              0
+            </span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</html>

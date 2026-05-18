@@ -21,7 +21,7 @@ public class QuestionController {
   @GetMapping("/add")
   public String getQuestionForm(@RequestParam Long raceId, Model model) {
     var raceExists = raceService.getQuestionsDtoById(raceId);
-    raceExists.orElseThrow(() -> new IllegalArgumentException("Race must exist to add questions!"));
+    raceExists.orElseThrow(() -> new IllegalArgumentException("Corrida não existe!"));
 
     model.addAttribute("race", raceExists.get());
 

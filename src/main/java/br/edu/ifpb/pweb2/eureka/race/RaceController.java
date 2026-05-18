@@ -23,6 +23,7 @@ import br.edu.ifpb.pweb2.eureka.question.dto.QuestionCheckDto;
 import br.edu.ifpb.pweb2.eureka.question.dto.attempt.AnswerAttemtCreateDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceCreateDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceDto;
+import br.edu.ifpb.pweb2.eureka.race.dto.RaceEditDto;
 import br.edu.ifpb.pweb2.eureka.result.ResultService;
 import br.edu.ifpb.pweb2.eureka.result.dto.ResultCheckDto;
 import br.edu.ifpb.pweb2.eureka.user.UserService;
@@ -88,7 +89,7 @@ public class RaceController {
   }
 
   @PostMapping("/edit/{id}")
-  public String postRaceEditForm(@PathVariable Long id, RaceDto newRace, RedirectAttributes attributes) {
+  public String postRaceEditForm(@PathVariable Long id, RaceEditDto newRace, RedirectAttributes attributes) {
     try {
       attributes.addFlashAttribute("raceId", raceService.edit(newRace));
       return "redirect:/home";

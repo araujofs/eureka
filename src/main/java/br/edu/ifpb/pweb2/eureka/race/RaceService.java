@@ -1,15 +1,18 @@
 package br.edu.ifpb.pweb2.eureka.race;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
+import br.edu.ifpb.pweb2.eureka.question.Question;
 import br.edu.ifpb.pweb2.eureka.question.dto.QuestionCreateDto;
 import br.edu.ifpb.pweb2.eureka.question.dto.QuestionMapper;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceCreateDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceDto;
+import br.edu.ifpb.pweb2.eureka.race.dto.RaceEditDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceMapper;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceMapperContext;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceQuestionsDto;
@@ -28,7 +31,7 @@ public class RaceService {
     return (repo.save(race)).getId();
   }
 
-  public boolean edit(RaceDto dto) {
+  public boolean edit(RaceEditDto dto) {
     Objects.requireNonNull(dto, "Race must not be null to save it!");
     var race = repo.findById(dto.getId())
         .orElseThrow(() -> new IllegalArgumentException("No race found with id: " + dto.getId()));
@@ -47,10 +50,9 @@ public class RaceService {
     var race = repo.findById(raceId)
         .orElseThrow(() -> new IllegalArgumentException("No race found with raceId: " + raceId));
 
+    race.getQuestions().clear();
+
     if (dtos.size() == 0) {
-      race.getQuestions().stream().forEach(question -> {
-        race.removeQuestion(question);
-      });
       fixActive(race);
       repo.save(race);
       return;
@@ -58,17 +60,7 @@ public class RaceService {
 
     var questions = QuestionMapper.INSTANCE.map(dtos);
 
-    race.getQuestions().forEach(question -> {
-      if (!questions.contains(question)) {
-        race.removeQuestion(question);
-      }
-    });
-
     questions.forEach(question -> {
-      if (question.getId() != null) {
-        race.removeQuestion(question);
-      }
-
       race.addQuestion(question);
     });
 
@@ -85,7 +77,8 @@ public class RaceService {
     var races = repo.findAllActiveRacesWithResults();
     var raceDtos = races.stream().map(race -> {
       var played = race.getResults().stream().anyMatch(result -> result.getParticipant().getId() == userId);
-      return new RaceDto(race.getId(), race.getTitle(), race.getDescription(), race.getDuration(), race.isActive(), played);
+      return new RaceDto(race.getId(), race.getTitle(), race.getDescription(), race.getDuration(), race.isActive(),
+          played);
     });
 
     return raceDtos.toList();

@@ -59,8 +59,8 @@ public class Race {
       throw new IllegalArgumentException("Question does not belong to Race");
     }
 
-    q.setRace(null);
     questions.remove(q);
+    q.setRace(null);
   }
 
   public void addResult(Result r) {
@@ -77,7 +77,18 @@ public class Race {
       throw new IllegalArgumentException("Result does not belong to Race");
     }
 
-    r.setRace(null);
     results.remove(r);
+    r.setRace(null);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (!(o instanceof Race))
+      return false;
+
+    var a = (Race) o;
+    return Objects.equals(title, a.title) && Objects.equals(description, a.description);
   }
 }

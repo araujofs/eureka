@@ -34,6 +34,8 @@ O Eureka permite:
 ./mvnw spring-boot:run
 ```
 
+Após iniciar, a aplicação fica disponível em: http://localhost:8080
+
 ## Testes
 
 ```bash

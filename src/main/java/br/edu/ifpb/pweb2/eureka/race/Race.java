@@ -45,6 +45,10 @@ public class Race {
   @OneToMany(mappedBy = "race", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Result> results = new HashSet<>();
 
+  public int getQuestionsSize()  {
+    return questions.size();
+  }
+
   public void addQuestion(Question q) {
     Objects.requireNonNull(q, "Question argument must not be null");
 

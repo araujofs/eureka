@@ -656,8 +656,9 @@ public class EurekaApplication {
       var result = new Result();
       result.setParticipant(user);
       result.setRace(race);
-      result.setStartedRaceAt(LocalDateTime.now().minusMinutes(5));
-      result.setFinishedRaceAt(LocalDateTime.now().minusMinutes(4));
+      var baseTime = LocalDateTime.now().minusDays(1 + (i % 20));
+      result.setStartedRaceAt(baseTime.minusMinutes(5));
+      result.setFinishedRaceAt(baseTime.minusMinutes(4));
 
       var questions = race.getQuestions();
       var maxAnswers = Math.min(5, questions.size());

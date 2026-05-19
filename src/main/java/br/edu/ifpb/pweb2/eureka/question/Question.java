@@ -3,6 +3,9 @@ package br.edu.ifpb.pweb2.eureka.question;
 import java.util.List;
 import java.util.Objects;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import br.edu.ifpb.pweb2.eureka.question.difficulty.Difficulty;
 import br.edu.ifpb.pweb2.eureka.race.Race;
 import jakarta.persistence.Column;

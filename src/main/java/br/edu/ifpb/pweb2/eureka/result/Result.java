@@ -43,11 +43,7 @@ public class Result {
   @JoinColumn(name = "race_id", nullable = false)
   private Race race;
 
-  @OneToMany(mappedBy = "result", fetch = FetchType.LAZY, cascade = {
-      CascadeType.REMOVE,
-      CascadeType.PERSIST,
-      CascadeType.MERGE
-  }, orphanRemoval = true)
+  @OneToMany(mappedBy = "result", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<AnswerAttempt> answers = new ArrayList<>();
 
   @CreationTimestamp
@@ -89,7 +85,6 @@ public class Result {
     }
 
     answers.remove(q);
-    q.setResult(null);
   }
 
   public Integer getPoints() {

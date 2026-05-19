@@ -34,10 +34,7 @@ public class User {
   @Column
   private boolean admin;
 
-  @OneToMany(mappedBy = "participant", cascade = {
-      CascadeType.REMOVE,
-      CascadeType.PERSIST
-  }, orphanRemoval = true)
+  @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Result> results = new HashSet<>();
 
   public void addResult(Result r) {

@@ -2,6 +2,9 @@ package br.edu.ifpb.pweb2.eureka.question.attempt;
 
 import java.util.Objects;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import br.edu.ifpb.pweb2.eureka.question.Question;
 import br.edu.ifpb.pweb2.eureka.result.Result;
 import jakarta.persistence.Column;
@@ -35,6 +38,7 @@ public class AnswerAttempt {
   // unidirectional
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "question_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Question question;
 
   @Column(nullable = false, updatable = false)

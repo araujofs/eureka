@@ -31,12 +31,13 @@ public class RankingService {
   public RankDto getRanking(Long userId) {
     List<User> users = userService.getAllWithResults();
     UserRankDto currUser = new UserRankDto();
+    currUser.setId(userId);
 
     List<UserRankDto> userRanks = users.stream().map(user -> {
       int userPoints = user.getResults().stream().mapToInt(result -> result.getPoints()).sum();
-      var userRank = new UserRankDto(user.getId(), userPoints, 0, user.getName());
+      var userRank = new UserRankDto(user.getId(), userPoints, 0, user.getName(), null);
 
-      if (user.getId() == userId) {
+      if (userId.equals(user.getId())) {
         currUser.setPoints(userPoints);
         currUser.setRanking(0);
         currUser.setUserName(user.getName());
@@ -49,16 +50,18 @@ public class RankingService {
 
     IntStream.range(0, userRanks.size()).forEach(i -> {
       var rank = userRanks.get(i);
-      System.out.println("Rank Id: " + rank.getId());
+        System.out.println("Entrou ID: " + rank.getId());
 
-      if (rank.getId() == userId) {
+      if (userId.equals(rank.getId())) {
+        System.out.println("Entrou aqui com o ID: " + rank.getId());
+
         currUser.setRanking(i);
       }
 
       rank.setRanking(i);
     });
 
-    return new RankDto(userRanks, currUser);
+    return new RankDto(userRanks, currUser, true);
   }
 
   public RankDto getRanking(Long userId, Race race) {
@@ -68,12 +71,13 @@ public class RankingService {
     List<UserRankDto> userRanks = race.getResults().stream().map(result -> {
       var user = result.getParticipant();
       int userPoints = result.getPoints();
-      var userRank = new UserRankDto(user.getId(), userPoints, 0, user.getName());
+      var userRank = new UserRankDto(user.getId(), userPoints, 0, user.getName(), result.getFinishedRaceAt());
 
-      if (user.getId() == userId) {
+      if (userId.equals(user.getId())) {
         currUser.setPoints(userPoints);
         currUser.setRanking(0);
         currUser.setUserName(user.getName());
+        currUser.setAnsweredAt(result.getFinishedRaceAt());
       }
 
       return userRank;
@@ -85,13 +89,13 @@ public class RankingService {
       var rank = userRanks.get(i);
       System.out.println("Rank Id: " + rank.getId());
 
-      if (rank.getId() == userId) {
+      if (userId.equals(rank.getId())) {
         currUser.setRanking(i);
       }
 
       rank.setRanking(i);
     });
 
-    return new RankDto(userRanks, currUser);
+    return new RankDto(userRanks, currUser, false);
   }
 }

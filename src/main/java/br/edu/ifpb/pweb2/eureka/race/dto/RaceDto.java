@@ -15,4 +15,5 @@ public class RaceDto {
   private Integer duration;
   private boolean active;
   private boolean played;
+  private int questionsSize;
 }

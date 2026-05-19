@@ -78,7 +78,7 @@ public class RaceService {
     var raceDtos = races.stream().map(race -> {
       var played = race.getResults().stream().anyMatch(result -> result.getParticipant().getId() == userId);
       return new RaceDto(race.getId(), race.getTitle(), race.getDescription(), race.getDuration(), race.isActive(),
-          played);
+          played, race.getQuestionsSize());
     });
 
     return raceDtos.toList();

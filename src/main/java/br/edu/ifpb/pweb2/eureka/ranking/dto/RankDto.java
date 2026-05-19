@@ -10,4 +10,5 @@ import lombok.Getter;
 public class RankDto {
   private List<UserRankDto> rank;
   private UserRankDto currentRankDto;
+  private boolean general;
 }

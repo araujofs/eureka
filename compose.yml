@@ -1,9 +1,29 @@
 services:
   backend:
     build: .
-    env_file: './.env'
+    environment:
+      DB_USER: eureka
+      DB_PASSWORD: eureka
+      DB_URL: "jdbc:postgresql://db:5432/eureka"
     ports:
       - 8080:8080
     depends_on:
       - db
-    profiles: [pro]
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: eureka
+      POSTGRES_PASSWORD: eureka
+      POSTGRES_DB: eureka
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U eureka']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - db-data:/var/lib/postgresql
+      
+volumes:
+  db-data:

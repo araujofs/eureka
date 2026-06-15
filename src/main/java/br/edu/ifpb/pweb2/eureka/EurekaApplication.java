@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.edu.ifpb.pweb2.eureka.question.Question;
 import br.edu.ifpb.pweb2.eureka.question.attempt.AnswerAttempt;
@@ -21,6 +22,8 @@ import br.edu.ifpb.pweb2.eureka.user.UserRepository;
 
 @SpringBootApplication
 public class EurekaApplication {
+  private static final String DEFAULT_SEEDED_PASSWORD = "123456";
+  private static final String SEED_MARKER_RACE_TITLE = "Arte clássica";
 
   public static void main(String[] args) {
     SpringApplication.run(EurekaApplication.class, args);
@@ -30,15 +33,20 @@ public class EurekaApplication {
   CommandLineRunner initAdminUser(
       UserRepository userRepo,
       RaceRepository raceRepo,
-      ResultRepository resultRepo) {
+      ResultRepository resultRepo,
+      PasswordEncoder passwordEncoder) {
     var adminName = "nilce";
     var userName = "arthur";
 
     return args -> {
-      seedUsers(userRepo, adminName, userName);
+      if (isSeedAlreadyDone(userRepo, raceRepo, adminName, userName)) {
+        return;
+      }
+
+      seedUsers(userRepo, passwordEncoder, adminName, userName);
 
       var race1 = new Race();
-      race1.setTitle("Arte clássica");
+      race1.setTitle(SEED_MARKER_RACE_TITLE);
       race1.setDescription("Pintura, escultura e movimentos artísticos.");
       race1.setDuration(150);
       race1.setActive(true);
@@ -553,7 +561,7 @@ public class EurekaApplication {
       raceRepo.save(race13);
       raceRepo.save(race10);
 
-      seedRanking(resultRepo, userRepo, List.of(
+      seedRanking(resultRepo, userRepo, passwordEncoder, List.of(
           race1,
           race2,
           race3,
@@ -585,25 +593,48 @@ public class EurekaApplication {
     return question;
   }
 
-  private static void seedUsers(UserRepository userRepo, String adminName, String userName) {
-    if (!userRepo.existsByName(adminName)) {
-      var admin = new User();
-      admin.setAdmin(true);
-      admin.setName(adminName);
-      userRepo.save(admin);
+  private static boolean isSeedAlreadyDone(
+      UserRepository userRepo,
+      RaceRepository raceRepo,
+      String adminName,
+      String userName) {
+    return raceRepo.existsByTitle(SEED_MARKER_RACE_TITLE)
+        && userRepo.existsByName(adminName)
+        && userRepo.existsByName(userName);
+  }
+
+  private static void seedUsers(
+      UserRepository userRepo,
+      PasswordEncoder passwordEncoder,
+      String adminName,
+      String userName) {
+    seedUser(userRepo, passwordEncoder, adminName, true);
+    seedUser(userRepo, passwordEncoder, userName, false);
+  }
+
+  private static User seedUser(
+      UserRepository userRepo,
+      PasswordEncoder passwordEncoder,
+      String name,
+      boolean admin) {
+    var user = userRepo.findByName(name).orElseGet(() -> {
+      var newUser = new User();
+      newUser.setAdmin(admin);
+      newUser.setName(name);
+      return newUser;
+    });
+
+    if (user.getPassword() == null || user.getPassword().isBlank()) {
+      user.setPassword(passwordEncoder.encode(DEFAULT_SEEDED_PASSWORD));
     }
 
-    if (!userRepo.existsByName(userName)) {
-      var user = new User();
-      user.setAdmin(false);
-      user.setName(userName);
-      userRepo.save(user);
-    }
+    return userRepo.save(user);
   }
 
   private static void seedRanking(
       ResultRepository resultRepo,
       UserRepository userRepo,
+      PasswordEncoder passwordEncoder,
       List<Race> races) {
     var userNames = List.of(
         "joao",
@@ -632,13 +663,7 @@ public class EurekaApplication {
 
     var users = new ArrayList<User>();
     for (var name : userNames) {
-      var user = userRepo.findByName(name).orElseGet(() -> {
-        var newUser = new User();
-        newUser.setAdmin(false);
-        newUser.setName(name);
-        return userRepo.save(newUser);
-      });
-      users.add(user);
+      users.add(seedUser(userRepo, passwordEncoder, name, false));
     }
 
     if (users.isEmpty() || races.isEmpty()) {

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RaceRepository extends JpaRepository<Race, Long> {
+  boolean existsByTitle(String title);
+
   List<Race> findAllByActiveTrue();
 
   @EntityGraph(attributePaths = {"results", "results.participant"})

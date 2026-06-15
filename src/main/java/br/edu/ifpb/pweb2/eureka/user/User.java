@@ -28,11 +28,14 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   private String name;
 
-  @Column
-  private boolean admin;
+  @Column(nullable = false)
+  private String password;
+
+  @Column(nullable = false)
+  private boolean admin = false;
 
   @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Result> results = new HashSet<>();

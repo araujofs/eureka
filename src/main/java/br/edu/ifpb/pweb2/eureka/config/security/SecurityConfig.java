@@ -22,6 +22,10 @@ public class SecurityConfig {
   SecurityFilterChain securityFilterChain(HttpSecurity http) {
     http
         .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(reqs -> reqs
+            // .requestMatchers("/home", "/ranking/**", "/race/**", "/question/**").authenticated()
+            .requestMatchers("/css/**").permitAll()
+            .requestMatchers("/auth").anonymous())
         .formLogin(form -> form
             .loginPage("/auth")
             .loginProcessingUrl("/auth")

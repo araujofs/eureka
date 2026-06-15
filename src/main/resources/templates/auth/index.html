@@ -9,11 +9,6 @@
       >
         Entrar
       </h1>
-      <p
-        class="mt-[0.55rem] mb-[1.7rem] text-center text-[0.95rem] text-[#454f63]"
-      >
-        Use apenas seu nome para acessar o sistema.
-      </p>
 
       <div
         th:if="${param.error}"
@@ -34,11 +29,21 @@
         <input
           th:field="*{name}"
           type="text"
-          placeholder="Digite seu nome"
+          placeholder="arthurito"
           required
           class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.95rem] py-[0.85rem] text-[0.98rem] transition-[border-color,box-shadow] duration-200 ease-out placeholder:text-[#667085] focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
         />
-        <input type="hidden" name="password" value="" />
+
+        <label for="name" class="mb-[0.55rem] block text-[0.92rem] font-bold"
+          >Senha</label
+        >
+        <input
+          th:field="*{password}"
+          type="password"
+          placeholder="abcDEF123*"
+          required
+          class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.95rem] py-[0.85rem] text-[0.98rem] transition-[border-color,box-shadow] duration-200 ease-out placeholder:text-[#667085] focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
+        />
         <button
           type="submit"
           class="mt-[1.1rem] w-full cursor-pointer rounded-xl border-0 bg-[#bf5de4] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-white transition-all duration-200 ease-out hover:-translate-y-px hover:bg-[#ab49d2] hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"

@@ -19,11 +19,13 @@ public class CustomUserDetails implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
+    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_PARTICIPANT");
+
     if (admin) {
-      return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+      return List.of(authority, new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
 
-    return List.of(new SimpleGrantedAuthority("ROLE_PARTICIPANT"));
+    return List.of(authority);
   }
 
   @Override

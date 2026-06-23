@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.eureka.auth;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
   @GetMapping
-  public String getAuthForm(Model model) {
+  public String getAuthForm(Model model, Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) return "redirect:/home";
+
     if (!model.containsAttribute("authBody")) {
       model.addAttribute("authBody", new AuthRequest("", ""));
     }

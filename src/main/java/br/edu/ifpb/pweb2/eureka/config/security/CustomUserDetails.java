@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.eureka.config.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,19 +14,19 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
+  private long userId;
   private String name;
   private String password;
   private boolean admin;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_PARTICIPANT");
+    var authorities = new ArrayList<>(List.of(new SimpleGrantedAuthority("ROLE_PARTICIPANT")));
 
-    if (admin) {
-      return List.of(authority, new SimpleGrantedAuthority("ROLE_ADMIN"));
-    }
+    if (admin)
+      authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
-    return List.of(authority);
+    return authorities;
   }
 
   @Override
@@ -38,4 +39,7 @@ public class CustomUserDetails implements UserDetails {
     return name;
   }
 
+  public long getUserId() {
+    return userId;
+  }
 }

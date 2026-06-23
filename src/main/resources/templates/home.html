@@ -88,7 +88,7 @@
 
             <div class="flex justify-end gap-2">
               <a
-                th:if="${session.admin}"
+                sec:authorize="hasRole('ADMIN')"
                 th:href="@{/race/delete/{id}(id=${race.id})}"
                 class="rounded-xl p-1 cursor-pointer border border-red-500 text-red-500 bg-red-50 flex items-center"
               >
@@ -101,7 +101,7 @@
               </a>
 
               <a
-                th:if="${session.admin}"
+                sec:authorize="hasRole('ADMIN')"
                 th:href="@{/question/add(raceId=${race.id})}"
                 class="rounded-xl p-1 cursor-pointer border border-indigo-500 text-indigo-500 bg-indigo-50 flex items-center"
               >
@@ -114,7 +114,7 @@
               </a>
 
               <a
-                th:if="${session.admin}"
+                sec:authorize="hasRole('ADMIN')"
                 th:href="@{/race/edit/{id}(id=${race.id})}"
                 class="rounded-xl p-1 cursor-pointer border border-purple-500 text-purple-500 bg-purple-50 flex items-center"
               >
@@ -140,9 +140,10 @@
               </a>
 
               <a
+                sec:authorize="!hasRole('ADMIN')"
                 th:href="@{/race/{id}/run/confirm(id=${race.id})}"
                 class="rounded-xl p-1 cursor-pointer border border-emerald-500 text-emerald-600 bg-emerald-50 flex items-center"
-                th:if="${race.active && !session.admin && !race.played}"
+                th:if="${race.active && !race.played}"
               >
                 <iconify-icon
                   icon="material-symbols:play-arrow"

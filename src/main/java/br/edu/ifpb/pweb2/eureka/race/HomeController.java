@@ -1,10 +1,12 @@
 package br.edu.ifpb.pweb2.eureka.race;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import br.edu.ifpb.pweb2.eureka.config.security.CustomUserDetails;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -17,10 +19,10 @@ public class HomeController {
   public static final String ERROR_MESSAGE_MODEL_ATTR = "errorMessage";
 
   @GetMapping("/home")
-  public String getHome(Model model, HttpSession session) {
-    var admin = (Boolean) session.getAttribute("admin");
-    var userId = (Long) session.getAttribute("userId");
-    var races = (admin != null && admin) ? service.getAll() : service.getAllActive(userId);
+  public String getHome(Model model, HttpSession session, Authentication auth) {
+    boolean admin = auth.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+    long userId = ((CustomUserDetails) auth.getPrincipal()).getUserId();
+    var races = (admin) ? service.getAll() : service.getAllActive(userId);
 
     System.out.println("Races: " + races);
 

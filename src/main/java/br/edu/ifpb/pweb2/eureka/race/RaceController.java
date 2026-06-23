@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.edu.ifpb.pweb2.eureka.config.security.CustomUserDetails;
 import br.edu.ifpb.pweb2.eureka.question.Question;
 import br.edu.ifpb.pweb2.eureka.question.QuestionService;
 import br.edu.ifpb.pweb2.eureka.question.attempt.AnswerAttempt;
@@ -127,8 +129,8 @@ public class RaceController {
   }
 
   @PostMapping("/{id}/run")
-  public String raceRun(@PathVariable Long id, HttpSession session, RedirectAttributes flashAttributes) {
-    var user = userService.getById((Long) session.getAttribute("userId")).orElse(null);
+  public String raceRun(@PathVariable Long id, HttpSession session, RedirectAttributes flashAttributes, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    var user = userService.getById((Long) userDetails.getUserId()).orElse(null);
     if (user == null) {
       flashAttributes.addFlashAttribute(HomeController.ERROR_MESSAGE_MODEL_ATTR,
           "Seu usuário não existe e portanto não pode participar de corridas!");

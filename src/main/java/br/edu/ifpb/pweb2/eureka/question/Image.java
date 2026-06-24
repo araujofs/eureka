@@ -6,20 +6,21 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Image {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
-  @Column(length = 1024)
+  @Column(length = 1024, nullable = false)
   private String name;
-
-  @Column(length = 1024)
-  private String url;
 
   @Column(columnDefinition = "bytea")
   private byte[] bytes;

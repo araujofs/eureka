@@ -3,13 +3,16 @@ package br.edu.ifpb.pweb2.eureka.race;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
+import br.edu.ifpb.pweb2.eureka.question.Image;
+import br.edu.ifpb.pweb2.eureka.question.ImageAction;
 import br.edu.ifpb.pweb2.eureka.question.Question;
+import br.edu.ifpb.pweb2.eureka.question.QuestionService;
 import br.edu.ifpb.pweb2.eureka.question.dto.QuestionCreateDto;
-import br.edu.ifpb.pweb2.eureka.question.dto.QuestionMapper;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceCreateDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceEditDto;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RaceService {
   private final RaceRepository repo;
+  private final QuestionService questionService;
 
   public Long create(RaceCreateDto dto) {
     Objects.requireNonNull(dto, "Race must not be null to save it!");
@@ -58,7 +62,25 @@ public class RaceService {
       return;
     }
 
-    var questions = QuestionMapper.INSTANCE.map(dtos);
+    List<Question> questions = dtos.stream().map(dto -> {
+      Question question = new Question();
+      question.setId(dto.getId());
+      question.setStatement(dto.getStatement());
+      question.setDifficulty(dto.getDifficulty());
+      question.setAnswers(dto.getAnswers());
+      question.setCorrectAnswer(dto.getCorrectAnswer());
+      question.setRace(race);
+      Image image;
+
+      try {
+        image = questionService.getImageFromDto(dto);
+      } catch (Exception e) {
+        image = null;
+      }
+      question.setImage(image);
+
+      return question;
+    }).collect(Collectors.toCollection(ArrayList::new));
 
     questions.forEach(question -> {
       race.addQuestion(question);
@@ -111,12 +133,15 @@ public class RaceService {
     raceQuestions.setId(race.get().getId());
 
     var questionDtos = race.get().getQuestions().stream().map(question -> {
-      var questionDto = new QuestionCreateDto();
-      questionDto.setId(question.getId());
-      questionDto.setAnswers(question.getAnswers());
-      questionDto.setCorrectAnswer(question.getCorrectAnswer());
-      questionDto.setDifficulty(question.getDifficulty());
-      questionDto.setStatement(question.getStatement());
+      var questionDto = new QuestionCreateDto(
+          question.getId(),
+          question.getStatement(),
+          question.getDifficulty(),
+          question.getAnswers(),
+          question.getCorrectAnswer(),
+          null,
+          question.getImage() != null ? ImageAction.KEEP : ImageAction.NONE,
+          question.getImage());
 
       return questionDto;
     }).toList();

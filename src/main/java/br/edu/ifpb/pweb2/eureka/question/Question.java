@@ -55,7 +55,7 @@ public class Question {
   @JoinColumn(name = "race_id", nullable = false)
   private Race race;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "image_id")
   @ToString.Exclude
   private Image image;

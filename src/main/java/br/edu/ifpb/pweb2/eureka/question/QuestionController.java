@@ -1,5 +1,7 @@
 package br.edu.ifpb.pweb2.eureka.question;
 
+import java.util.Arrays;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import br.edu.ifpb.pweb2.eureka.race.RaceService;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceQuestionsDto;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class QuestionController {
 
   private final RaceService raceService;
+  private final QuestionService service;
 
   @GetMapping("/add")
   public String getQuestionForm(@RequestParam Long raceId, Model model) {
@@ -29,7 +33,13 @@ public class QuestionController {
   }
 
   @PostMapping("/add")
-  public String postQuestionForm(RaceQuestionsDto race) {
+  public String postQuestionForm(RaceQuestionsDto race, HttpServletRequest request) {
+    request.getParameterMap().forEach((key, value) -> {
+      if (key.contains("imageAction")) {
+        System.out.println(key + " = " + Arrays.toString(value));
+      }
+    });
+
     raceService.addQuestions(race.getQuestions(), race.getId());
 
     return "redirect:/home";

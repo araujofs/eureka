@@ -3,6 +3,7 @@
       <form
         th:action="@{/question/add}"
         method="post"
+        enctype="multipart/form-data"
         th:object="${race}"
         class="mx-auto flex w-full max-w-5xl flex-col gap-4"
       >
@@ -127,6 +128,29 @@
                 placeholder="Digite a resposta 4"
                 class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.95rem] py-[0.8rem] text-[0.95rem] transition-[border-color,box-shadow] duration-200 ease-out placeholder:text-[#667085] focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
               />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label
+                for="draft-image"
+                class="mb-[0.45rem] block text-[0.9rem] font-bold"
+                >Imagem</label
+              >
+              <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input
+                  id="draft-image"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                  class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.95rem] py-[0.72rem] text-[0.95rem] file:mr-3 file:rounded-lg file:border-0 file:bg-[#f1f3f7] file:px-3 file:py-2 file:text-[0.86rem] file:font-bold file:text-[#3f4552] transition-[border-color,box-shadow] duration-200 ease-out focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
+                />
+                <button
+                  type="button"
+                  id="clear-draft-image"
+                  class="shrink-0 rounded-lg border border-[#d8dce6] bg-white px-3 py-2 text-[0.85rem] font-semibold text-[#3f4552] transition hover:bg-[#f1f3f7]"
+                >
+                  Limpar imagem
+                </button>
+              </div>
             </div>
           </div>
 
@@ -364,6 +388,67 @@
                     class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.9rem] py-[0.78rem] text-[0.93rem] transition-[border-color,box-shadow] duration-200 ease-out focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
                   />
                 </div>
+
+                <div class="sm:col-span-2">
+                  <input
+                    type="hidden"
+                    data-field="imageAction"
+                    th:name="|questions[${stat.index}].imageAction|"
+                    th:value="${question.imageAction}"
+                    th:attr="data-initial-action=${question.imageAction}"
+                  />
+                  <label
+                    data-label-for="image-upload"
+                    class="mb-[0.4rem] block text-[0.88rem] font-bold"
+                    th:for="|question-${stat.index}-image-upload|"
+                    >Imagem</label
+                  >
+                  <div
+                    class="question-existing-image flex flex-col gap-2 sm:flex-row sm:items-center"
+                    th:classappend="${question.image != null ? '' : ' hidden'}"
+                  >
+                    <div
+                      class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.9rem] py-[0.78rem] text-[0.93rem] font-semibold text-[#3f4552]"
+                      th:text="${question.image != null ? question.image.name : ''}"
+                    >
+                      imagem.png
+                    </div>
+                    <button
+                      type="button"
+                      class="clear-question-image shrink-0 rounded-lg border border-[#d8dce6] bg-white px-3 py-2 text-[0.85rem] font-semibold text-[#3f4552] transition hover:bg-[#f1f3f7]"
+                    >
+                      Remover imagem
+                    </button>
+                  </div>
+                  <div
+                    class="question-image-controls mt-2 flex flex-col gap-2 sm:flex-row sm:items-center"
+                    th:classappend="${question.image != null ? ' hidden' : ''}"
+                  >
+                    <input
+                      type="file"
+                      data-input-id="image-upload"
+                      data-field="imageUpload"
+                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                      th:id="|question-${stat.index}-image-upload|"
+                      th:name="|questions[${stat.index}].imageUpload|"
+                      class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.9rem] py-[0.7rem] text-[0.93rem] file:mr-3 file:rounded-lg file:border-0 file:bg-[#f1f3f7] file:px-3 file:py-2 file:text-[0.84rem] file:font-bold file:text-[#3f4552] transition-[border-color,box-shadow] duration-200 ease-out focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
+                    />
+                    <button
+                      type="button"
+                      class="clear-question-image shrink-0 rounded-lg border border-[#d8dce6] bg-white px-3 py-2 text-[0.85rem] font-semibold text-[#3f4552] transition hover:bg-[#f1f3f7]"
+                    >
+                      Limpar imagem
+                    </button>
+                  </div>
+                  <p
+                    class="question-image-status mt-2 text-[0.84rem] font-semibold text-[#4a5261]"
+                    th:classappend="${question.image != null ? ' hidden' : ' hidden'}"
+                    th:attr="data-existing-name=${question.image != null ? question.image.name : ''}"
+                    th:text="'Nova imagem selecionada.'"
+                  >
+                    Nova imagem selecionada.
+                  </p>
+                </div>
               </div>
             </article>
           </div>
@@ -386,6 +471,8 @@
 
       const draftStatement = document.getElementById("draft-statement");
       const draftDifficulty = document.getElementById("draft-difficulty");
+      const draftImage = document.getElementById("draft-image");
+      const clearDraftImageButton = document.getElementById("clear-draft-image");
       const draftCorrectAnswer = document.getElementById(
         "draft-correct-answer",
       );
@@ -431,6 +518,90 @@
         updateCount();
       };
 
+      const validateImageFile = (input) => {
+        const file = input.files?.[0];
+        if (!file) {
+          return true;
+        }
+
+        const validType = ["image/jpeg", "image/png"].includes(file.type);
+        const validName = /\.(jpe?g|png)$/i.test(file.name);
+        if (validType && validName) {
+          return true;
+        }
+
+        input.setCustomValidity("Selecione uma imagem JPG, JPEG ou PNG.");
+        input.reportValidity();
+        input.setCustomValidity("");
+        return false;
+      };
+
+      const copyFileToInput = (source, target) => {
+        const file = source.files?.[0];
+        if (!file) {
+          return;
+        }
+
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        target.files = transfer.files;
+      };
+
+      const setImageState = (card, action) => {
+        const actionInput = card?.querySelector('[data-field="imageAction"]');
+        const status = card?.querySelector(".question-image-status");
+        const controls = card?.querySelector(".question-image-controls");
+        const existingImage = card?.querySelector(".question-existing-image");
+        const clearButton = card?.querySelector(".clear-question-image");
+        const initialAction = actionInput?.dataset.initialAction;
+
+        if (actionInput) {
+          actionInput.value = action;
+        }
+
+        if (controls) {
+          controls.classList.toggle("hidden", action === "KEEP");
+        }
+
+        if (existingImage) {
+          existingImage.classList.toggle("hidden", action !== "KEEP");
+        }
+
+        if (clearButton) {
+          clearButton.textContent = action === "KEEP" ? "Remover imagem" : "Limpar imagem";
+        }
+
+        if (!status) {
+          return;
+        }
+
+        if (action === "KEEP") {
+          status.classList.add("hidden");
+          return;
+        }
+
+        if (action === "REPLACE") {
+          status.textContent = "Nova imagem selecionada.";
+          status.classList.remove("hidden");
+          return;
+        }
+
+        if (action === "REMOVE") {
+          status.textContent = initialAction === "KEEP"
+            ? "Imagem será removida. Escolha um arquivo para substituir."
+            : "Imagem será removida.";
+          status.classList.remove("hidden");
+          return;
+        }
+
+        status.classList.add("hidden");
+      };
+
+      const getInitialImageAction = (card) => {
+        const actionInput = card?.querySelector('[data-field="imageAction"]');
+        return actionInput?.dataset.initialAction === "KEEP" ? "KEEP" : "NONE";
+      };
+
       const bindRemoveButtons = () => {
         questionsContainer
           .querySelectorAll(".remove-question")
@@ -443,6 +614,67 @@
             button.addEventListener("click", () => {
               button.closest(".question-card")?.remove();
               updateCardLabels();
+            });
+          });
+      };
+
+      const bindImageControls = () => {
+        questionsContainer
+          .querySelectorAll(".question-card")
+          .forEach((card) => {
+            const actionInput = card.querySelector('[data-field="imageAction"]');
+            if (actionInput && !actionInput.dataset.stateInitialized) {
+              actionInput.dataset.stateInitialized = "true";
+              setImageState(card, actionInput.value || "NONE");
+            }
+          });
+
+        questionsContainer
+          .querySelectorAll(".clear-question-image")
+          .forEach((button) => {
+            if (button.dataset.bound === "true") {
+              return;
+            }
+
+            button.dataset.bound = "true";
+            button.addEventListener("click", () => {
+              const card = button.closest(".question-card");
+              const fileInput = card?.querySelector('[data-field="imageUpload"]');
+              const hadSelectedFile = Boolean(fileInput?.files?.length);
+
+              if (fileInput) {
+                fileInput.value = "";
+              }
+
+              if (hadSelectedFile) {
+                setImageState(card, getInitialImageAction(card));
+                return;
+              }
+
+              setImageState(card, getInitialImageAction(card) === "KEEP" ? "REMOVE" : "NONE");
+            });
+          });
+
+        questionsContainer
+          .querySelectorAll('[data-field="imageUpload"]')
+          .forEach((input) => {
+            if (input.dataset.bound === "true") {
+              return;
+            }
+
+            input.dataset.bound = "true";
+            input.addEventListener("change", () => {
+              if (!validateImageFile(input)) {
+                input.value = "";
+                setImageState(input.closest(".question-card"), getInitialImageAction(input.closest(".question-card")));
+                return;
+              }
+
+              const card = input.closest(".question-card");
+              setImageState(
+                card,
+                input.files?.length ? "REPLACE" : getInitialImageAction(card),
+              );
             });
           });
       };
@@ -497,6 +729,16 @@
               <label data-label-for="answer-3" class="mb-[0.4rem] block text-[0.88rem] font-bold">Resposta 4</label>
               <input type="text" required data-input-id="answer-3" data-field="answers[3]" class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.9rem] py-[0.78rem] text-[0.93rem] transition-[border-color,box-shadow] duration-200 ease-out focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]" />
             </div>
+            <div class="sm:col-span-2">
+              <input type="hidden" data-field="imageAction" data-initial-action="NONE" value="NONE" />
+              <label data-label-for="image-upload" class="mb-[0.4rem] block text-[0.88rem] font-bold">Imagem</label>
+              <div class="question-existing-image hidden flex flex-col gap-2 sm:flex-row sm:items-center"></div>
+              <div class="question-image-controls flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input type="file" data-input-id="image-upload" data-field="imageUpload" accept=".jpg,.jpeg,.png,image/jpeg,image/png" class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.9rem] py-[0.7rem] text-[0.93rem] file:mr-3 file:rounded-lg file:border-0 file:bg-[#f1f3f7] file:px-3 file:py-2 file:text-[0.84rem] file:font-bold file:text-[#3f4552] transition-[border-color,box-shadow] duration-200 ease-out focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]" />
+                <button type="button" class="clear-question-image shrink-0 rounded-lg border border-[#d8dce6] bg-white px-3 py-2 text-[0.85rem] font-semibold text-[#3f4552] transition hover:bg-[#f1f3f7]">Limpar imagem</button>
+              </div>
+              <p class="question-image-status hidden mt-2 text-[0.84rem] font-semibold text-[#4a5261]">Nova imagem selecionada.</p>
+            </div>
           </div>
         `;
 
@@ -509,6 +751,7 @@
         const answer1 = card.querySelector('[data-field="answers[1]"]');
         const answer2 = card.querySelector('[data-field="answers[2]"]');
         const answer3 = card.querySelector('[data-field="answers[3]"]');
+        const imageUpload = card.querySelector('[data-field="imageUpload"]');
 
         statement.value = values.statement;
         difficulty.value = values.difficulty;
@@ -517,6 +760,8 @@
         answer1.value = values.answers[1];
         answer2.value = values.answers[2];
         answer3.value = values.answers[3];
+        copyFileToInput(values.image, imageUpload);
+        setImageState(card, imageUpload.files.length ? "REPLACE" : "NONE");
 
         return card;
       };
@@ -548,6 +793,11 @@
           }
         }
 
+        if (!validateImageFile(draftImage)) {
+          draftImage.focus();
+          return false;
+        }
+
         return true;
       };
 
@@ -558,6 +808,7 @@
         draftAnswers.forEach((answer) => {
           answer.value = "";
         });
+        draftImage.value = "";
       };
 
       addButton.addEventListener("click", () => {
@@ -570,16 +821,23 @@
           difficulty: draftDifficulty.value,
           correctAnswer: draftCorrectAnswer.value,
           answers: draftAnswers.map((answer) => answer.value.trim()),
+          image: draftImage,
         };
 
         const card = createQuestionCard(values);
         questionsContainer.appendChild(card);
         updateCardLabels();
         bindRemoveButtons();
+        bindImageControls();
         clearDraft();
       });
 
+      clearDraftImageButton.addEventListener("click", () => {
+        draftImage.value = "";
+      });
+
       bindRemoveButtons();
+      bindImageControls();
       updateCardLabels();
     </script>
 </html>

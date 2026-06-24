@@ -4,52 +4,69 @@
   th:with="title='Corrida em andamento'"
 >
   <section
-    class="w-full max-w-3xl rounded-[22px] self-center border border-[#1f243014] bg-white p-6 sm:p-8 shadow-[0_14px_28px_rgba(31,36,48,0.1)]"
+    class="flex flex-col w-full justify-between rounded-[22px] border grow border-[#1f243014] bg-white p-6 sm:p-8 shadow-[0_14px_28px_rgba(31,36,48,0.1)]"
     layout:fragment="content"
   >
-    <div class="mb-6">
-      <h1
-        class="m-0 text-[1.7rem] sm:text-[1.9rem] font-extrabold leading-tight text-[#7d3f97]"
-        th:text="${question.statement}"
+    <h1
+      class="m-0 text-[1.7rem] sm:text-[1.9rem] font-extrabold leading-tight text-[#7d3f97]"
+      th:text="${question.statement}"
+    >
+      Pergunta atual
+    </h1>
+
+    <div class="grid grid-cols-7 grow place-items-center">
+      <div
+        class="flex justify-center items-center rounded-full col-span-1 size-20 md:size-28 bg-[#7d3f97] text-3xl md:text-5xl text-white"
       >
-        Pergunta atual
-      </h1>
-      <p class="mt-2 text-[0.98rem] text-[#5a6270]">
-        Escolha a alternativa correta para continuar.
-      </p>
+        <span id="timer">0</span>
+      </div>
+      <img src="" alt="" class="col-span-5" />
     </div>
 
     <form
       th:action="@{/race/{id}/answer(id=${question.race.id})}"
       method="post"
-      class="mt-6 space-y-3"
+      class="flex flex-col mt-6 space-y-3"
+      id="form"
     >
       <input type="hidden" name="resultId" th:value="${resultId}" />
       <input type="hidden" name="questionId" th:value="${question.id}" />
 
-      <div class="space-y-3">
+      <div class="grid grid-cols-2 grid-rows-2 gap-3 w-full">
         <label
           th:each="answer, stat : ${question.answers}"
-          class="flex items-start gap-3 rounded-xl border border-[#e6e8ee] bg-white px-4 py-3 text-[0.98rem] text-[#3f4552] transition hover:border-[#c9ced9] hover:bg-[#f9f8fd]"
+          class="flex items-center gap-1 rounded-xl border border-[#e6e8ee] bg-white px-4 py-3 text-lg font-medium transition hover:border-[#c9ced9] hover:bg-[#f9f8fd]"
         >
           <input
-            type="radio"
+            type="submit"
             name="answerIndex"
-            class="mt-1 h-4 w-4 accent-[#7d3f97]"
+            class="mt-1 h-10 w-0 accent-[#7d3f97] text-transparent"
             th:value="${stat.index}"
             required
+            onchange="this.form.submit()"
           />
           <span th:text="${answer}">Resposta</span>
           <!-- <span th:text="${stat.index}">Resposta</span> -->
         </label>
       </div>
-
-      <button
-        type="submit"
-        class="mt-4 w-full cursor-pointer rounded-xl border-0 bg-[#bf5de4] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-white transition-all duration-200 ease-out hover:-translate-y-px hover:bg-[#ab49d2] hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
-      >
-        Confirmar resposta
-      </button>
     </form>
   </section>
+  <script layout:fragment="script" th:inline="javascript">
+    let elapsedSeconds = /*[[${elapsedSeconds}]]*/ null;
+    const raceDuration = /*[[${raceDuration}]]*/ null;
+
+    const timer = document.querySelector("#timer");
+    const form = document.querySelector("#form");
+    timer.textContent = `${raceDuration - elapsedSeconds}`;
+
+    setInterval(() => {
+      elapsedSeconds++;
+
+      if (elapsedSeconds >= raceDuration) {
+        form.submit();
+      }
+
+      timer.textContent = `${raceDuration - elapsedSeconds}`;
+    }, 1000);
+  </script>
 </html>

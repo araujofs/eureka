@@ -177,6 +177,7 @@ public class RaceController {
       return "redirect:/race/" + id + "/result";
     }
 
+
     result.setCurrentQuestionId(
         questionCheck.getQuestionsIds().size() > 0 ? questionCheck.getQuestionsIds().getFirst() : null);
     resultService.edit(result);
@@ -187,6 +188,8 @@ public class RaceController {
 
     model.addAttribute("question", question);
     model.addAttribute("resultId", result.getId());
+    model.addAttribute("elapsedSeconds", Duration.between(result.getStartedRaceAt(), LocalDateTime.now()).toSeconds());
+    model.addAttribute("raceDuration", result.getRace().getDuration());
 
     return "race/question";
   }

@@ -1,17 +1,19 @@
 package br.edu.ifpb.pweb2.eureka.ranking;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.pweb2.eureka.race.Race;
 import br.edu.ifpb.pweb2.eureka.ranking.dto.RankDto;
 import br.edu.ifpb.pweb2.eureka.ranking.dto.UserRankDto;
+import br.edu.ifpb.pweb2.eureka.result.Result;
+import br.edu.ifpb.pweb2.eureka.result.ResultRepository;
 import br.edu.ifpb.pweb2.eureka.user.User;
+import br.edu.ifpb.pweb2.eureka.user.UserRepository;
 import br.edu.ifpb.pweb2.eureka.user.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -19,83 +21,49 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RankingService {
 
+  private final UserRepository userRepo;
+  private final ResultRepository resultRepo;
   private final UserService userService;
 
-  class RankComparator implements Comparator<UserRankDto> {
-    @Override
-    public int compare(UserRankDto rank1, UserRankDto rank2) {
-      return rank2.getPoints() - rank1.getPoints();
+  public RankDto<User> getOverallRanking(Long userId, Pageable pageable) {
+    Page<User> users = userRepo.findAll(pageable);
+    List<UserRankDto> ranks = new ArrayList<>();
+    UserRankDto currUserRank = null;
+
+    int offset = users.getNumber() * users.getSize();
+
+    for (int i = 0; i < users.getNumberOfElements(); i++) {
+      User user = users.getContent().get(i);
+      UserRankDto userRank = new UserRankDto(user.getId(), user.getTotalPoints(), offset + i, user.getName(), null);
+      ranks.add(userRank);
+
+      if (userId.equals(user.getId())) {
+        currUserRank = userRank;
+      }
     }
+
+    return new RankDto<User>(ranks, currUserRank, true, users);
   }
 
-  public RankDto getRanking(Long userId) {
-    List<User> users = userService.getAllWithResults();
-    UserRankDto currUser = new UserRankDto();
-    currUser.setId(userId);
+  public RankDto<Result> getRankingByRace(Race race, Long userId, Pageable pageable) {
+    Page<Result> results = resultRepo.findByRace(race, pageable);
+    List<UserRankDto> ranks = new ArrayList<>();
+    UserRankDto currUserRank = null;
 
-    List<UserRankDto> userRanks = users.stream().map(user -> {
-      int userPoints = user.getResults().stream().mapToInt(result -> result.getPoints()).sum();
-      var userRank = new UserRankDto(user.getId(), userPoints, 0, user.getName(), null);
+    int offset = results.getNumber() * results.getSize();
 
-      if (userId.equals(user.getId())) {
-        currUser.setPoints(userPoints);
-        currUser.setRanking(0);
-        currUser.setUserName(user.getName());
-      }
+    for (int i = 0; i < results.getNumberOfElements(); i++) {
+      Result result = results.getContent().get(i);
+      User user = result.getParticipant();
 
-      return userRank;
-    }).collect(Collectors.toCollection(ArrayList::new));
-
-    userRanks.sort(new RankComparator());
-
-    IntStream.range(0, userRanks.size()).forEach(i -> {
-      var rank = userRanks.get(i);
-        System.out.println("Entrou ID: " + rank.getId());
-
-      if (userId.equals(rank.getId())) {
-        System.out.println("Entrou aqui com o ID: " + rank.getId());
-
-        currUser.setRanking(i);
-      }
-
-      rank.setRanking(i);
-    });
-
-    return new RankDto(userRanks, currUser, true);
-  }
-
-  public RankDto getRanking(Long userId, Race race) {
-    UserRankDto currUser = new UserRankDto();
-    currUser.setId(userId);
-
-    List<UserRankDto> userRanks = race.getResults().stream().map(result -> {
-      var user = result.getParticipant();
-      int userPoints = result.getPoints();
-      var userRank = new UserRankDto(user.getId(), userPoints, 0, user.getName(), result.getFinishedRaceAt());
+      UserRankDto userRank = new UserRankDto(user.getId(), result.getTotalPoints(), i + offset, user.getName(), result.getFinishedRaceAt());
+      ranks.add(userRank);
 
       if (userId.equals(user.getId())) {
-        currUser.setPoints(userPoints);
-        currUser.setRanking(0);
-        currUser.setUserName(user.getName());
-        currUser.setAnsweredAt(result.getFinishedRaceAt());
+        currUserRank = userRank;
       }
+    }
 
-      return userRank;
-    }).collect(Collectors.toCollection(ArrayList::new));
-
-    userRanks.sort(new RankComparator());
-
-    IntStream.range(0, userRanks.size()).forEach(i -> {
-      var rank = userRanks.get(i);
-      System.out.println("Rank Id: " + rank.getId());
-
-      if (userId.equals(rank.getId())) {
-        currUser.setRanking(i);
-      }
-
-      rank.setRanking(i);
-    });
-
-    return new RankDto(userRanks, currUser, false);
+    return new RankDto<Result>(ranks, currUserRank, true, results);
   }
 }

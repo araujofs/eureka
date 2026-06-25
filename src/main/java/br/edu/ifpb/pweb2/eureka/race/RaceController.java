@@ -275,7 +275,7 @@ public class RaceController {
     resultService.saveAndFlush(result);
 
     User user = result.getParticipant();
-    user.setTotalPoints(result.getTotalPoints());
+    user.setTotalPoints(result.getTotalPoints() + user.getTotalPoints());
     userService.edit(user);
 
     session.removeAttribute(ANSWER_SESSION_ATTR);

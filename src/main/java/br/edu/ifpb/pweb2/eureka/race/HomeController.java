@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.eureka.race;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,14 +22,30 @@ public class HomeController {
   @GetMapping("/home")
   public String getHome(Model model, HttpSession session, Authentication auth) {
     boolean admin = auth.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+
+    if (admin)
+      return "redirect:/admin";
+
     long userId = ((CustomUserDetails) auth.getPrincipal()).getUserId();
-    var races = (admin) ? service.getAll() : service.getAllActive(userId);
+    var races = service.getAllActive(userId);
 
     System.out.println("Races: " + races);
 
     model.addAttribute("races", races);
 
     return "home";
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @GetMapping("/admin")
+  public String getAdminHome(Model model, HttpSession session, Authentication auth) {
+    var races = service.getAll();
+
+    System.out.println("Races: " + races);
+
+    model.addAttribute("races", races);
+
+    return "home-admin";
   }
 
   @GetMapping

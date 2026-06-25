@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -122,6 +123,7 @@ public class RaceController {
     return "redirect:/home";
   }
 
+  @PreAuthorize("!hasRole('ADMIN')")
   @GetMapping("/{id}/run/confirm")
   public String raceInitConfirmTemplate(@PathVariable Long id, Model model) {
     model.addAttribute("raceId", id);
@@ -129,6 +131,7 @@ public class RaceController {
     return "race/run-confirm";
   }
 
+  @PreAuthorize("!hasRole('ADMIN')")
   @PostMapping("/{id}/run")
   public String raceRun(@PathVariable Long id, HttpSession session, RedirectAttributes flashAttributes,
       @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -155,6 +158,7 @@ public class RaceController {
     return "redirect:/race/" + id + "/running";
   }
 
+  @PreAuthorize("!hasRole('ADMIN')")
   @GetMapping("/{id}/running")
   public String raceRunningTemplate(@PathVariable Long id, Model model, HttpSession session,
       RedirectAttributes flashAttributes) {
@@ -195,6 +199,7 @@ public class RaceController {
     return "race/question";
   }
 
+  @PreAuthorize("!hasRole('ADMIN')")
   @PostMapping("/{id}/answer")
   public String verifyAnswer(AnswerAttemtCreateDto answerAttempt, @PathVariable Long id, HttpSession session,
       RedirectAttributes flashAttributes) {
@@ -236,6 +241,7 @@ public class RaceController {
     return "redirect:/race/" + id + "/answer";
   }
 
+  @PreAuthorize("!hasRole('ADMIN')")
   @GetMapping("/{id}/answer")
   public String checkAnswerPage(@PathVariable Long id, Model model, HttpSession session,
       RedirectAttributes flashAttributes) {
@@ -254,6 +260,7 @@ public class RaceController {
     return "race/answer";
   }
 
+  @PreAuthorize("!hasRole('ADMIN')")
   @GetMapping("/{id}/result")
   public String result(@PathVariable Long id, Model model, HttpSession session, RedirectAttributes flashAttributes) {
     var resultCheck = hasResult(session, id);

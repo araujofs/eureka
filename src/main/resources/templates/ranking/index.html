@@ -16,7 +16,7 @@
 
     <section
       class="mb-6 rounded-2xl border border-[#e6e8ee] bg-[#fbfbff] px-5 py-4"
-      th:if="${ranking.currentRankDto.ranking != null}"
+      th:if="${ranking.currentRankDto != null and ranking.currentRankDto.ranking != null}"
     >
       <div
         class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
@@ -59,7 +59,7 @@
 
     <section
       class="mb-6 rounded-2xl border border-[#e6e8ee] bg-[#fbfbff] px-5 py-4"
-      th:if="${ranking.currentRankDto.ranking == null and not ranking.general}"
+      th:if="${ranking.currentRankDto == null and not ranking.general}"
     >
       <div
         class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
@@ -79,7 +79,7 @@
       <article
         th:each="userRank : ${ranking.rank}"
         class="rounded-2xl border border-[#e6e8ee] bg-white p-4 sm:p-5"
-        th:classappend="${userRank.ranking == ranking.currentRankDto.ranking} ? ' border-[#7d3f97] bg-[#f8f2fb]' : ''"
+        th:classappend="${ranking.currentRankDto != null and userRank.ranking == ranking.currentRankDto.ranking} ? ' border-[#7d3f97] bg-[#f8f2fb]' : ''"
       >
         <div class="flex items-center justify-between gap-4">
           <div class="flex items-center gap-3">
@@ -126,5 +126,100 @@
         </div>
       </article>
     </div>
+
+    <nav
+      th:if="${page != null and page.totalPages > 1}"
+      class="mt-6 flex flex-col gap-3 rounded-2xl border border-[#e6e8ee] bg-[#fbfbff] px-4 py-3"
+      aria-label="Paginação do ranking"
+    >
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <span
+          class="text-center text-[0.9rem] font-semibold text-[#4a5261] sm:text-left"
+          th:text="|Página ${page.number + 1} de ${page.totalPages}|"
+        >
+          Página 1 de 1
+        </span>
+
+        <form
+          method="get"
+          th:action="${race != null} ? @{/ranking/race/{id}(id=${race.id})} : @{/ranking}"
+          class="flex items-center justify-center gap-2"
+        >
+          <input type="hidden" name="page" value="1" />
+          <label
+            for="ranking-page-size"
+            class="text-[0.86rem] font-semibold text-[#4a5261]"
+            >Itens por página</label
+          >
+          <select
+            id="ranking-page-size"
+            name="size"
+            onchange="this.form.submit()"
+            class="rounded-xl border border-[#d8dce6] bg-white px-3 py-2 text-[0.88rem] font-bold text-[#3f4552] transition focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
+          >
+            <option value="2" th:selected="${page.size == 2}">2</option>
+            <option value="5" th:selected="${page.size == 5}">5</option>
+            <option value="10" th:selected="${page.size == 10}">10</option>
+          </select>
+        </form>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <span
+          th:if="${page.first}"
+          class="rounded-xl border border-[#d8dce6] bg-[#f1f3f7] px-4 py-2 text-[0.88rem] font-bold text-[#98a2b3]"
+        >
+          Anterior
+        </span>
+        <a
+          th:unless="${page.first}"
+          th:href="${race != null}
+            ? @{/ranking/race/{id}(id=${race.id}, page=${page.number}, size=${page.size})}
+            : @{/ranking(page=${page.number}, size=${page.size})}"
+          class="rounded-xl border border-[#d8dce6] bg-white px-4 py-2 text-[0.88rem] font-bold text-[#3f4552] transition hover:bg-[#f1f3f7]"
+        >
+          Anterior
+        </a>
+
+        <th:block
+          th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}"
+        >
+          <span
+            th:if="${pageNumber == page.number + 1}"
+            aria-current="page"
+            class="inline-flex size-10 items-center justify-center rounded-xl border border-[#7d3f97] bg-[#7d3f97] text-[0.88rem] font-extrabold text-white shadow-[0_8px_18px_rgba(125,63,151,0.22)]"
+            th:text="${pageNumber}"
+          >
+            1
+          </span>
+          <a
+            th:unless="${pageNumber == page.number + 1}"
+            th:href="${race != null}
+              ? @{/ranking/race/{id}(id=${race.id}, page=${pageNumber}, size=${page.size})}
+              : @{/ranking(page=${pageNumber}, size=${page.size})}"
+            class="inline-flex size-10 items-center justify-center rounded-xl border border-[#d8dce6] bg-white text-[0.88rem] font-bold text-[#3f4552] transition hover:bg-[#f1f3f7]"
+            th:text="${pageNumber}"
+          >
+            1
+          </a>
+        </th:block>
+
+        <span
+          th:if="${page.last}"
+          class="rounded-xl border border-[#d8dce6] bg-[#f1f3f7] px-4 py-2 text-[0.88rem] font-bold text-[#98a2b3]"
+        >
+          Próxima
+        </span>
+        <a
+          th:unless="${page.last}"
+          th:href="${race != null}
+            ? @{/ranking/race/{id}(id=${race.id}, page=${page.number + 2}, size=${page.size})}
+            : @{/ranking(page=${page.number + 2}, size=${page.size})}"
+          class="rounded-xl border border-[#d8dce6] bg-white px-4 py-2 text-[0.88rem] font-bold text-[#3f4552] transition hover:bg-[#f1f3f7]"
+        >
+          Próxima
+        </a>
+      </div>
+    </nav>
   </section>
 </html>

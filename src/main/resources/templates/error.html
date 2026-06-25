@@ -1,0 +1,82 @@
+<html lang="pt-br" layout:decorate="~{layout}" th:with="title='Erro'">
+  <section
+    class="w-full max-w-2xl self-center rounded-[20px] border border-[#1f243014] bg-white p-6 shadow-[0_14px_28px_rgba(31,36,48,0.1)] sm:p-8"
+    aria-label="Página de erro"
+    layout:fragment="content"
+  >
+    <div class="flex flex-col items-center text-center">
+      <div
+        class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#f5ca6ccc] bg-[#f5ca6c38] text-[#7d3f97]"
+      >
+        <iconify-icon
+          icon="material-symbols:error-outline-rounded"
+          width="36"
+          height="36"
+          noobserver
+        ></iconify-icon>
+      </div>
+
+      <p class="text-[0.86rem] font-bold uppercase tracking-[0.08em] text-[#7d3f97]">
+        Algo saiu do esperado
+      </p>
+
+      <h1
+        class="mt-2 font-[Sora,sans-serif] text-[2.4rem] font-bold leading-none text-[#1f2430] sm:text-[3rem]"
+        th:text="${status != null ? status : 'Erro'}"
+      >
+        Erro
+      </h1>
+
+      <p
+        class="mt-3 text-[1rem] font-semibold text-[#3f4552]"
+        th:text="${error != null ? error : 'Não foi possível concluir a solicitação.'}"
+      >
+        Não foi possível concluir a solicitação.
+      </p>
+
+      <p
+        th:if="${message != null and !#strings.isEmpty(message)}"
+        class="mt-2 max-w-xl text-[0.95rem] leading-relaxed text-[#5a6270]"
+        th:text="${message}"
+      >
+        Mensagem de erro.
+      </p>
+
+      <div
+        th:if="${path != null}"
+        class="mt-5 w-full rounded-xl border border-[#1f243014] bg-[#f8f7fb] px-4 py-3 text-left text-[0.88rem] text-[#5a6270]"
+      >
+        <span class="font-bold text-[#1f2430]">Rota:</span>
+        <span class="break-all" th:text="${path}">/</span>
+      </div>
+
+      <div class="mt-6 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <a
+          th:href="@{/home}"
+          class="inline-flex items-center justify-center gap-2 rounded-xl border border-[#7d3f97] bg-[#7d3f97] px-5 py-3 text-[0.95rem] font-bold text-white transition hover:bg-[#6f3588]"
+        >
+          <iconify-icon
+            icon="material-symbols:home-outline-rounded"
+            width="22"
+            height="22"
+            noobserver
+          ></iconify-icon>
+          Voltar para início
+        </a>
+
+        <a
+          th:href="@{/auth}"
+          class="inline-flex items-center justify-center gap-2 rounded-xl border border-[#1f24301f] bg-white px-5 py-3 text-[0.95rem] font-bold text-[#1f2430] transition hover:bg-[#f1f3f7]"
+        >
+          <iconify-icon
+            icon="material-symbols:login-rounded"
+            width="22"
+            height="22"
+            noobserver
+          ></iconify-icon>
+          Entrar novamente
+        </a>
+      </div>
+    </div>
+  </section>
+</html>

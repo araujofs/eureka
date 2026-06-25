@@ -1,31 +1,28 @@
-<html lang="pt-br" layout:decorate="~{layout}" th:with="title='Entrar'">
+<html lang="pt-br" layout:decorate="~{layout}" th:with="title='Criar conta'">
     <section
       class="w-full max-w-[400px] rounded-[20px] border border-[#1f243014] self-center bg-white p-6 sm:p-8 shadow-[0_14px_28px_rgba(31,36,48,0.1)] max-h-fit"
-      aria-label="Formulário de login"
+      aria-label="Formulário de cadastro"
       layout:fragment="content"
     >
       <h1
         class="m-0 text-[1.9rem] text-center font-extrabold leading-tight text-[#7d3f97]"
       >
-        Entrar
+        Criar conta
       </h1>
 
+      <p class="mt-2 mb-5 text-center text-[0.92rem] text-[#5a6270]">
+        Informe seus dados para começar a participar das corridas.
+      </p>
+
       <div
-        th:if="${param.error}"
+        th:if="${errorMessage}"
         class="mb-4 rounded-[10px] border border-[#f5ca6ccc] bg-[#f5ca6c38] px-[0.85rem] py-3 text-[0.86rem] text-[#6f4a05]"
       >
-        Usuário ou senha incorretos!
+        [[${errorMessage}]]
       </div>
 
-      <!-- <div -->
-      <!--   th:if="${errorMessage}" -->
-      <!--   class="mb-4 rounded-[10px] border border-[#f5ca6ccc] bg-[#f5ca6c38] px-[0.85rem] py-3 text-[0.86rem] text-[#6f4a05]" -->
-      <!-- > -->
-      <!--   [[${errorMessage}]] -->
-      <!-- </div> -->
-      <!---->
       <form
-        th:action="@{/auth}"
+        th:action="@{/auth/new}"
         method="post"
         th:object="${authBody}"
         class="space-y-0"
@@ -41,7 +38,7 @@
           class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.95rem] py-[0.85rem] text-[0.98rem] transition-[border-color,box-shadow] duration-200 ease-out placeholder:text-[#667085] focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
         />
 
-        <label for="name" class="mb-[0.55rem] block text-[0.92rem] font-bold"
+        <label for="password" class="mt-4 mb-[0.55rem] block text-[0.92rem] font-bold"
           >Senha</label
         >
         <input
@@ -51,20 +48,21 @@
           required
           class="w-full rounded-xl border border-[#1f243033] bg-white px-[0.95rem] py-[0.85rem] text-[0.98rem] transition-[border-color,box-shadow] duration-200 ease-out placeholder:text-[#667085] focus:border-[#43bf8a] focus:outline-none focus:ring-[3px] focus:ring-[#6cf5ba47]"
         />
+
         <button
           type="submit"
           class="mt-[1.1rem] w-full cursor-pointer rounded-xl border-0 bg-[#bf5de4] px-4 py-[0.85rem] text-[0.98rem] font-extrabold tracking-[0.02em] text-white transition-all duration-200 ease-out hover:-translate-y-px hover:bg-[#ab49d2] hover:shadow-[0_10px_22px_rgba(208,108,245,0.32)]"
         >
-          Entrar
+          Criar conta
         </button>
       </form>
 
       <p class="mt-5 text-center text-[0.9rem] text-[#5a6270]">
-        Ainda não tem conta?
+        Já tem conta?
         <a
-          th:href="@{/auth/new}"
+          th:href="@{/auth}"
           class="font-bold text-[#7d3f97] transition hover:text-[#6f3588]"
-          >Criar conta</a
+          >Entrar</a
         >
       </p>
     </section>

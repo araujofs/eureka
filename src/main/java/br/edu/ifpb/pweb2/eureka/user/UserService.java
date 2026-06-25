@@ -32,5 +32,9 @@ public class UserService {
 
     return repo.save(user);
   }
+
+  public User edit(User u) {
+    return repo.save(u);
+  }
     
 }

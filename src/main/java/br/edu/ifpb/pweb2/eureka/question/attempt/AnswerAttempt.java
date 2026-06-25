@@ -47,6 +47,9 @@ public class AnswerAttempt {
   @Column(nullable = false, updatable = false)
   private boolean answerCorrect;
 
+  @Column(nullable = false)
+  private int pointsReceived = 0;
+
   @Override
   public boolean equals(Object o) {
     if (this == o)

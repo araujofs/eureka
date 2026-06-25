@@ -54,6 +54,9 @@ public class Result {
 
   private Long currentQuestionId;
 
+  @Column(nullable = false)
+  private int totalPoints = 0;
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
@@ -75,6 +78,7 @@ public class Result {
 
     q.setResult(this);
     answers.add(q);
+    totalPoints += q.getPointsReceived();
   }
 
   public void removeAnswer(AnswerAttempt q) {
@@ -85,10 +89,6 @@ public class Result {
     }
 
     answers.remove(q);
-  }
-
-  public Integer getPoints() {
-    return getAnswers().stream().filter(answer -> answer.isAnswerCorrect())
-        .mapToInt(answer -> answer.getQuestion().getDifficulty().getValue()).sum();
+    totalPoints -= q.getPointsReceived();
   }
 }

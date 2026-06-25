@@ -679,7 +679,6 @@ public class EurekaApplication {
       }
 
       var result = new Result();
-      result.setParticipant(user);
       result.setRace(race);
       var baseTime = LocalDateTime.now().minusDays(1 + (i % 20));
       result.setStartedRaceAt(baseTime.minusMinutes(5));
@@ -695,10 +694,13 @@ public class EurekaApplication {
         answerAttempt.setQuestion(question);
         answerAttempt.setAnswerIndex(answerIndex);
         answerAttempt.setAnswerCorrect(answerIndex == question.getCorrectAnswer());
+        answerAttempt.setPointsReceived(question.getDifficulty().getValue());
         result.addAnswer(answerAttempt);
       }
 
+      user.addResult(result);
       resultRepo.save(result);
+      userRepo.save(user);
     }
   }
 

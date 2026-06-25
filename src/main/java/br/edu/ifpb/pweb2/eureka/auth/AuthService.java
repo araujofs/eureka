@@ -12,12 +12,7 @@ public class AuthService {
   private final UserService service;
 
   public AuthResponse authenticate(AuthRequest auth) {
-    System.out.println(auth.name());
     var user = service.getByName(auth.name()).orElse(null);
-
-    if (user == null) {
-      user = service.create(auth.name());
-    }
 
     return new AuthResponse(user.getId(), user.getName(), user.isAdmin());
   }

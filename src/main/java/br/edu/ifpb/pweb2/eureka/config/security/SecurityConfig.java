@@ -24,6 +24,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(reqs -> reqs
             .requestMatchers("/css/**", "/error", "/favicon.ico").permitAll()
+            .requestMatchers("/auth/new").permitAll()
             .requestMatchers("/race/create/**", "/race/edit/**", "/race/delete/**", "/question/**").hasRole("ADMIN")
             .anyRequest().authenticated()
             )
@@ -32,7 +33,7 @@ public class SecurityConfig {
             .loginProcessingUrl("/auth")
             .usernameParameter("name")
             .defaultSuccessUrl("/home")
-            .failureUrl("/auth")
+            .failureUrl("/auth?error")
             .permitAll())
         .logout(logout -> logout
             .logoutUrl("/auth/logout"));

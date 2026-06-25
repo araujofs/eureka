@@ -27,6 +27,7 @@ import br.edu.ifpb.pweb2.eureka.race.dto.RaceCreateDto;
 import br.edu.ifpb.pweb2.eureka.race.dto.RaceEditDto;
 import br.edu.ifpb.pweb2.eureka.result.ResultService;
 import br.edu.ifpb.pweb2.eureka.result.dto.ResultCheckDto;
+import br.edu.ifpb.pweb2.eureka.user.User;
 import br.edu.ifpb.pweb2.eureka.user.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -129,7 +130,8 @@ public class RaceController {
   }
 
   @PostMapping("/{id}/run")
-  public String raceRun(@PathVariable Long id, HttpSession session, RedirectAttributes flashAttributes, @AuthenticationPrincipal CustomUserDetails userDetails) {
+  public String raceRun(@PathVariable Long id, HttpSession session, RedirectAttributes flashAttributes,
+      @AuthenticationPrincipal CustomUserDetails userDetails) {
     var user = userService.getById((Long) userDetails.getUserId()).orElse(null);
     if (user == null) {
       flashAttributes.addFlashAttribute(HomeController.ERROR_MESSAGE_MODEL_ATTR,
@@ -176,7 +178,6 @@ public class RaceController {
       flashAttributes.addFlashAttribute("message", "O tempo acabou!");
       return "redirect:/race/" + id + "/result";
     }
-
 
     result.setCurrentQuestionId(
         questionCheck.getQuestionsIds().size() > 0 ? questionCheck.getQuestionsIds().getFirst() : null);
@@ -266,12 +267,16 @@ public class RaceController {
 
     resultService.saveAndFlush(result);
 
+    User user = result.getParticipant();
+    user.setTotalPoints(result.getTotalPoints());
+    userService.edit(user);
+
     session.removeAttribute(ANSWER_SESSION_ATTR);
     session.removeAttribute(QUESTIONS_SESSION_ATTR);
     session.removeAttribute(RESULT_SESSION_ATTR);
     session.removeAttribute(RACE_SESSION_ATTR);
 
-    model.addAttribute("points", result.getPoints());
+    model.addAttribute("points", result.getTotalPoints());
     model.addAttribute("answers", result.getAnswers());
     model.addAttribute("time", Duration.between(result.getStartedRaceAt(), result.getFinishedRaceAt()).getSeconds());
 

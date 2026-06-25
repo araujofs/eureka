@@ -40,11 +40,15 @@ public class User {
   @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Result> results = new HashSet<>();
 
+  @Column(nullable = false)
+  private int totalPoints;
+
   public void addResult(Result r) {
     Objects.requireNonNull(r, "Question argument must not be null");
 
     r.setParticipant(this);
     results.add(r);
+    totalPoints += r.getTotalPoints();
   }
 
   public void removeResult(Result r) {
@@ -56,5 +60,6 @@ public class User {
 
     results.remove(r);
     r.setRace(null);
+    totalPoints -= r.getTotalPoints();
   }
 }

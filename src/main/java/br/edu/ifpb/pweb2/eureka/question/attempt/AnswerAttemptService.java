@@ -26,6 +26,7 @@ public class AnswerAttemptService {
     answer.setAnswerIndex(answerIndex);
     answer.setQuestion(question);
     answer.setAnswerCorrect(answerIndex == question.getCorrectAnswer());
+    answer.setPointsReceived(question.getDifficulty().getValue());
 
     return answer;
   }

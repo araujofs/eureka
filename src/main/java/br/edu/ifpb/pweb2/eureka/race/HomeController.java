@@ -29,8 +29,6 @@ public class HomeController {
     long userId = ((CustomUserDetails) auth.getPrincipal()).getUserId();
     var races = service.getAllActive(userId);
 
-    System.out.println("Races: " + races);
-
     model.addAttribute("races", races);
 
     return "home";
@@ -40,8 +38,6 @@ public class HomeController {
   @GetMapping("/admin")
   public String getAdminHome(Model model, HttpSession session, Authentication auth) {
     var races = service.getAll();
-
-    System.out.println("Races: " + races);
 
     model.addAttribute("races", races);
 

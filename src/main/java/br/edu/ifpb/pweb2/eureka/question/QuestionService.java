@@ -21,8 +21,6 @@ public class QuestionService {
   }
 
   public Image getImageFromDto(QuestionCreateDto dto) throws IOException, NotFoundException {
-    System.out.printf("DEBUG: ENTROU NO QUESTIONSERVICE (id: %s) COM ACTION -> %s\n", dto.getId(), dto.getImageAction());
-
     switch (dto.getImageAction()) {
       case ImageAction.KEEP:
         Question question = getById(dto.getId())
@@ -43,8 +41,6 @@ public class QuestionService {
       // return null;
 
       default:
-        System.out.printf("DEBUG: ENTROU NO DEFAULT (id: %s) COM ACTION -> %s\n", dto.getId(),
-            dto.getImageAction());
         return null;
     }
   }

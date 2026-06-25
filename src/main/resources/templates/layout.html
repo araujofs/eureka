@@ -15,26 +15,6 @@
       </a>
       <div class="flex items-center gap-2">
         <a
-          sec:authorize="hasRole('ADMIN')"
-          th:href="@{/race/create}"
-          class="inline-flex items-center gap-2 rounded-full border border-[#7d3f97] px-4 py-2 text-[0.85rem] font-semibold text-[#7d3f97] transition hover:bg-[#7d3f97] hover:text-white"
-        >
-          <svg
-            class="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 5v14" />
-            <path d="M5 12h14" />
-          </svg>
-          Nova corrida
-        </a>
-        <a
           sec:authorize="isAuthenticated()"
           th:href="@{/ranking}"
           class="inline-flex items-center gap-2 rounded-full border border-[#1f24301f] px-4 py-2 text-[0.85rem] font-semibold text-[#1f2430] transition hover:bg-[#f1f3f7]"

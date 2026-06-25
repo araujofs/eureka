@@ -34,12 +34,6 @@ public class QuestionController {
 
   @PostMapping("/add")
   public String postQuestionForm(RaceQuestionsDto race, HttpServletRequest request) {
-    request.getParameterMap().forEach((key, value) -> {
-      if (key.contains("imageAction")) {
-        System.out.println(key + " = " + Arrays.toString(value));
-      }
-    });
-
     raceService.addQuestions(race.getQuestions(), race.getId());
 
     return "redirect:/home";

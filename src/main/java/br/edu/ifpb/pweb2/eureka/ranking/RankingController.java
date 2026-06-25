@@ -30,7 +30,7 @@ public class RankingController {
 
   @GetMapping
   public String getRankingPage(Model model, Authentication auth, @RequestParam(defaultValue = "1") int page,
-      @RequestParam(defaultValue = "3") int size) {
+      @RequestParam(defaultValue = "2") int size) {
     long userId = ((CustomUserDetails) auth.getPrincipal()).getUserId();
 
     Pageable paging = PageRequest.of(page - 1, size, Sort.by("totalPoints").descending());
@@ -45,7 +45,7 @@ public class RankingController {
 
   @GetMapping("/race/{id}")
   public String getRaceRankingPage(@PathVariable Long id, Model model, Authentication auth,
-      @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
+      @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "2") int size) {
     long userId = ((CustomUserDetails) auth.getPrincipal()).getUserId();
     Race race = raceService.getByIdWithResults(id)
         .orElseThrow(() -> new IllegalArgumentException("Corrida não existe!"));
